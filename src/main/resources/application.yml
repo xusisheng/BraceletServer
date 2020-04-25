@@ -1,0 +1,33 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: BraceletServer
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:/myehcache.xml
+  mvc:
+    #配置静态资源
+    static-path-pattern: /static/**
+
+oviphone:
+  presetuser:
+    name: aowei
+    pass: 123456
+  api-uri:
+    #域名
+    domain: http://www.aiday.com.cn:10502
+    #设备最新位置和设备基本信息接口
+    equiment-info: ${oviphone.api-uri.domain}/api/Device/PersonDeviceList
+    #健康数据接口
+    health-info: ${oviphone.api-uri.domain}/api/Health/GetHealth
+    #登陆接口
+    login: ${oviphone.api-uri.domain}/api/User/Login
+    #指令下发接口——关机和设置阈值时使用
+    send-cmd: ${oviphone.api-uri.domain}/api/Command/SendCommand
+    #历史轨迹接口
+    history-track: ${oviphone.api-uri.domain}/api/Location/History
+    #历史报警信息接口
+    history-warnmsg: ${oviphone.api-uri.domain}/api/ExceptionMessage/ExcdeptionListWhitoutCode
+
