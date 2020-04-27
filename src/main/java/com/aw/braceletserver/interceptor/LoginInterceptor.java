@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
-    private Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
+    private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 
     @Autowired
     private PresetUser presetUser;

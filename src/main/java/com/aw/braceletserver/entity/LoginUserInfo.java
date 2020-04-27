@@ -1,6 +1,6 @@
 package com.aw.braceletserver.entity;
 
-public class LoginUserInfo {
+public class LoginUserInfo extends BaseEntity {
     private Integer UserId;
     private String Username;
     private String LoginName;

@@ -1,6 +1,6 @@
 package com.aw.braceletserver.entity;
 
-public class LoginThirdParty {
+public class LoginThirdParty extends BaseEntity {
     private Integer UserID;
     private String ThirdImg;
     private String ThirdName;

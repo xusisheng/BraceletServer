@@ -1,8 +1,12 @@
 package com.aw.braceletserver.entity;
 
-import com.aw.braceletserver.constants.ResultInfoType;
-
 public class UnifyResponse<T> extends BaseEntity {
+	private static final int CODE_SUCCESS = 0;
+	private static final String MSG_SUCCESS = "Success";
+	private static final int CODE_FAIL = -1;
+	private static final String MSG_FAIL = "Failed";
+	private static final int CODE_ERROR = 500;
+	private static final String MSG_ERROR = "Error";
 
 	/* 返回状态 */
 	private int errorcode;
@@ -11,11 +15,12 @@ public class UnifyResponse<T> extends BaseEntity {
 	/* 数据 */
 	public T result;
 
-	public UnifyResponse() {
-		ResultInfoType res = ResultInfoType.RESULT_SUCCESS;
-		errorcode = res.getResultcode();
-		description = res.getResultInfo();
-		result = null;
+	public UnifyResponse() {}
+
+	public UnifyResponse(int errorcode, String description, T result) {
+		this.errorcode = errorcode;
+		this.description = description;
+		this.result = result;
 	}
 
 	public int getErrorcode() {
@@ -37,24 +42,15 @@ public class UnifyResponse<T> extends BaseEntity {
 		this.result = result;
 	}
 
-	/**
-	 * 设置返回值
-	 *
-	 * @param res 返回信息数组
-	 */
-//	public void setResult(ResultInfoType res) {
-//		errorcode = res.getResultcode();
-//		description = res.getResultInfo();
-//	}
+	public static <T> UnifyResponse<T> success() {
+		return new UnifyResponse<T>(CODE_SUCCESS, MSG_SUCCESS, null);
+	}
 
-	/**
-	 * 设置返回状态及信息
-	 * @param status 返回状态
-	 * @param msg 返回信息
-	 */
-//	public void setResult(int status, String msg) {
-//		this.errorcode = status;
-//		this.description = msg;
-//	}
+	public static <T> UnifyResponse<T> success(T data) {
+		return new UnifyResponse<T>(CODE_SUCCESS, MSG_SUCCESS, data);
+	}
 
+	public static <T> UnifyResponse<T> failed() {
+		return new UnifyResponse<T>(CODE_FAIL, MSG_FAIL, null);
+	}
 }

@@ -19,8 +19,7 @@ import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private ApiUri apiUri;
@@ -28,13 +27,15 @@ public class UserServiceImpl implements UserService {
     @Cacheable(value="myCache", key="'user'+#user", unless = "#result eq null")
     @Override
     public LoginResult login(String user, String pass) throws Exception {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, Object> params = new HashMap();
         params.put("name", user);
         params.put("pass", pass);
         HttpClientResult _result = HttpClientUtils.doPost(apiUri.getLogin(), params);
         if (_result.getCode() == 200) {
             JSONObject objJson = JSONObject.parseObject(_result.getContent());
-            return JSON.toJavaObject(objJson, LoginResult.class);
+            LoginResult loginResult = JSON.toJavaObject(objJson, LoginResult.class);
+            loginResult.setAccessToken("74FBE649B34FC42CE01414B8556BFC86");
+            return loginResult;
         }
         return null;
     }

@@ -1,17 +1,33 @@
 package com.aw.braceletserver.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.aw.braceletserver.entity.*;
+import com.aw.braceletserver.entity.oviphone.PersonDeviceInfo;
+import com.aw.braceletserver.entity.oviphone.RespDeviceInfo;
+import com.aw.braceletserver.properties.ApiUri;
 import com.aw.braceletserver.utils.JsonMapper;
+import com.aw.braceletserver.utils.http.HttpClientResult;
+import com.aw.braceletserver.utils.http.HttpClientUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/Exchange")
 public class ApiController {
+    private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @Autowired
+    private ApiUri apiUri;
+
+    @PostMapping("/logout")
     public String logout(UserInfo userInfo) {
         System.out.println("==========");
         return "aaaaaa";
@@ -22,32 +38,41 @@ public class ApiController {
      */
     @PostMapping("/shouhuan_getList")
     @ResponseBody
-    public RespGetList getList(@RequestBody UnifyRequest<ReqGetList> request)
-    {
+    public RespGetList getList(UserInfo userInfo, UnifyRequest<ReqGetList> request) throws Exception {
         ReqGetList reqGetList = request.getParams();
-        System.out.println(JsonMapper.toJson(reqGetList));
-
         RespGetList<JSONArray> response = new RespGetList();
-        response.setDescription("SUCCESS");
-        response.setErrorcode(0);
 
-        JSONArray ja = new JSONArray();
-        BraceletTrack bt1 = new BraceletTrack();
-        bt1.setRecord_time("2018-11-22 01:56:45");
-        bt1.setLon("114.034833");
-        bt1.setLat("22.539651");
-        bt1.setDevid("10000");
-        bt1.setAt("0");
-        ja.add(bt1);
-        BraceletTrack bt2 = new BraceletTrack();
-        bt2.setRecord_time("2018-11-22 07:07:28");
-        bt2.setLon("114.034842");
-        bt2.setLat("22.539812");
-        bt2.setDevid("10001");
-        bt2.setAt("0");
-        ja.add(bt2);
-        response.setTotal_num(2);
-        response.setResult(ja);
+        //发送请求
+        Map<String, Object> params = new HashMap();
+        params.put("Token", userInfo.getAccessToken());
+        params.put("UserId", userInfo.getItem().getUserId());
+        params.put("MapType", "");
+        HttpClientResult _result = HttpClientUtils.doPostForJson(apiUri.getEquimentInfo(), JsonMapper.toJson(params));
+        if (_result.getCode() == 200) {
+//            response.setErrorcode(UnifyResponse.success().getErrorcode());
+//            response.setDescription(UnifyResponse.success().getDescription());
+//            JSONArray ja = new JSONArray();
+//
+//            JSONObject objJson = JSONObject.parseObject(_result.getContent());
+//            RespDeviceInfo<JSONArray> respDeviceInfo = JSON.toJavaObject(objJson, RespDeviceInfo.class);
+//            JSONArray items = respDeviceInfo.getItems();
+//            for(int i = 0; i < items.size(); i++) {
+//                JSONObject jo = items.getJSONObject(i);
+//                PersonDeviceInfo personDeviceInfo = JSON.toJavaObject(jo, PersonDeviceInfo.class);
+//                BraceletTrack braceletTrack = new BraceletTrack();
+//                braceletTrack.setRecord_time(personDeviceInfo.getDeviceUtcTime());
+//                braceletTrack.setLon(personDeviceInfo.getLongitude());
+//                braceletTrack.setLat(personDeviceInfo.getLatitude());
+//                braceletTrack.setDevid(personDeviceInfo.getId());
+//                braceletTrack.setAt("0");
+//                ja.add(braceletTrack);
+//            }
+//            response.setTotal_num(items.size());
+//            response.setResult(ja);
+        } else {
+            response.setErrorcode(UnifyResponse.failed().getErrorcode());
+            response.setDescription(UnifyResponse.failed().getDescription());
+        }
         return response;
     }
 
