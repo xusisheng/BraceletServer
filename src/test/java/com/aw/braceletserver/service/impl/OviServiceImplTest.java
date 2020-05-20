@@ -3,8 +3,6 @@ package com.aw.braceletserver.service.impl;
 import com.aw.braceletserver.BraceletServerApplication;
 import com.aw.braceletserver.entity.oviphone.*;
 import com.aw.braceletserver.service.OviService;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +17,6 @@ public class OviServiceImplTest {
 
     @Autowired
     private OviService oviService;
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void getDeviceList() {

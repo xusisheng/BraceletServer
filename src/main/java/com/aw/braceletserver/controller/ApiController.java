@@ -1,23 +1,21 @@
 package com.aw.braceletserver.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aw.braceletserver.entity.*;
-import com.aw.braceletserver.entity.oviphone.PersonDeviceInfo;
-import com.aw.braceletserver.entity.oviphone.RespDeviceInfo;
+import com.aw.braceletserver.entity.oviphone.ReqDeviceList;
 import com.aw.braceletserver.properties.ApiUri;
+import com.aw.braceletserver.service.ApiService;
+import com.aw.braceletserver.service.OviService;
 import com.aw.braceletserver.utils.JsonMapper;
-import com.aw.braceletserver.utils.http.HttpClientResult;
-import com.aw.braceletserver.utils.http.HttpClientUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/Exchange")
@@ -26,6 +24,8 @@ public class ApiController {
 
     @Autowired
     private ApiUri apiUri;
+    @Autowired
+    private ApiService apiService;
 
     @PostMapping("/logout")
     public String logout(UserInfo userInfo) {
@@ -38,37 +38,26 @@ public class ApiController {
      */
     @PostMapping("/shouhuan_getList")
     @ResponseBody
-    public RespGetList getList(UserInfo userInfo, UnifyRequest<ReqGetList> request) throws Exception {
-        ReqGetList reqGetList = request.getParams();
-        RespGetList<JSONArray> response = new RespGetList();
+    public RespGetList getList(UserInfo userInfo, @RequestBody UnifyRequest<ReqGetList> request) throws Exception {
+        JSONArray ja = request.getParams().getIdlist();
+        Integer limit = request.getParams().getLimit();
 
-        //发送请求
-        Map<String, Object> params = new HashMap();
-        params.put("Token", userInfo.getAccessToken());
-        params.put("UserId", userInfo.getItem().getUserId());
-        params.put("MapType", "");
-        HttpClientResult _result = HttpClientUtils.doPostForJson(apiUri.getEquimentInfo(), JsonMapper.toJson(params));
-        if (_result.getCode() == 200) {
-//            response.setErrorcode(UnifyResponse.success().getErrorcode());
-//            response.setDescription(UnifyResponse.success().getDescription());
-//            JSONArray ja = new JSONArray();
-//
-//            JSONObject objJson = JSONObject.parseObject(_result.getContent());
-//            RespDeviceInfo<JSONArray> respDeviceInfo = JSON.toJavaObject(objJson, RespDeviceInfo.class);
-//            JSONArray items = respDeviceInfo.getItems();
-//            for(int i = 0; i < items.size(); i++) {
-//                JSONObject jo = items.getJSONObject(i);
-//                PersonDeviceInfo personDeviceInfo = JSON.toJavaObject(jo, PersonDeviceInfo.class);
-//                BraceletTrack braceletTrack = new BraceletTrack();
-//                braceletTrack.setRecord_time(personDeviceInfo.getDeviceUtcTime());
-//                braceletTrack.setLon(personDeviceInfo.getLongitude());
-//                braceletTrack.setLat(personDeviceInfo.getLatitude());
-//                braceletTrack.setDevid(personDeviceInfo.getId());
-//                braceletTrack.setAt("0");
-//                ja.add(braceletTrack);
-//            }
-//            response.setTotal_num(items.size());
-//            response.setResult(ja);
+        //获取用户下所有手环轨迹信息
+        List<BraceletTrack> list = apiService.getHistoryLocation(userInfo);
+        RespGetList<JSONArray> response = new RespGetList();
+        if (null != list) {
+            //依据手环ID过滤
+            List<BraceletTrack> ll = new ArrayList<>();
+            for(int i = 0; i < ja.size(); i++) {
+                Integer id = ja.getInteger(i);
+                for(int j = 0; j < list.size(); j++) {
+                    if (StringUtils.equals(String.valueOf(id), list.get(j).getDevid())) {
+                        ll.add(list.get(j));
+                    }
+                }
+            }
+            response.setTotal_num(ll.size());
+            response.setResult(ll);
         } else {
             response.setErrorcode(UnifyResponse.failed().getErrorcode());
             response.setDescription(UnifyResponse.failed().getDescription());
@@ -81,7 +70,7 @@ public class ApiController {
      */
     @PostMapping("/shouhuan_getStatus")
     @ResponseBody
-    public UnifyResponse getStatus(@RequestBody UnifyRequest<ReqIdList> request)
+    public UnifyResponse getStatus(UserInfo userInfo, @RequestBody UnifyRequest<ReqIdList> request)
     {
         ReqIdList idList = request.getParams();
         System.out.println(JsonMapper.toJson(idList));
@@ -194,7 +183,7 @@ public class ApiController {
      */
     @PostMapping("/shouhuan_getInfo")
     @ResponseBody
-    public RespGetInfo getInfo(@RequestBody(required = false) UnifyRequest request)
+    public RespGetInfo getPushInfo(@RequestBody(required = false) UnifyRequest request)
     {
         RespGetInfo<JSONArray> response = new RespGetInfo();
         response.setCode(0);
@@ -213,6 +202,28 @@ public class ApiController {
         bt2.setUpTime(new Date().getTime());
         ja.add(bt2);
         response.setResult(ja);
+        return response;
+    }
+
+    /**
+     * 运营商从厂商平台接收到手环SOS信息后的反馈接口
+     */
+    @GetMapping("/shouhuan_sosFeedback")
+    @ResponseBody
+    public UnifyResponse sosFeedback(@RequestParam("bang_id") String bangId,
+                                     @RequestParam("time") String time,
+                                     @RequestParam("sing") String sing)
+    {
+        UnifyResponse response = new UnifyResponse();
+        String str = bangId + "_" + time + "_dhcc";
+        String sign = DigestUtils.md5DigestAsHex(str.getBytes());
+        if (StringUtils.equals(sign, sing)) {
+            response.setDescription("SUCCESS");
+            response.setErrorcode(0);
+        } else {
+            response.setDescription("Failed");
+            response.setErrorcode(-1);
+        }
         return response;
     }
 }

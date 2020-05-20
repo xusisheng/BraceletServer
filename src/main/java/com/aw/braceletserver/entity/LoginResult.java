@@ -3,7 +3,7 @@ package com.aw.braceletserver.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class LoginResult {
+public class LoginResult extends BaseEntity {
     private Integer loginType;
     private String accessToken;
     private LoginUserInfo Item;

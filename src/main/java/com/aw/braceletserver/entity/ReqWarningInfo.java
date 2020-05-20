@@ -3,7 +3,7 @@ package com.aw.braceletserver.entity;
 /**
  * 手环告警事件阈值设置接口请求
  */
-public class ReqWarningInfo {
+public class ReqWarningInfo extends BaseEntity {
     /**
      * 告警类型（1 心率）
      */
