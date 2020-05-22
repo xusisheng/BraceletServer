@@ -2,7 +2,7 @@ package com.aw.braceletserver.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aw.braceletserver.mapper.*;
-import com.aw.braceletserver.entity.*;
+import com.aw.braceletserver.model.*;
 import com.aw.braceletserver.service.DeviceManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,7 +226,7 @@ public class DeviceManagerServiceImpl implements DeviceManagerService {
     }
     @Override
     public Device addDevice(Device device) {
-    	device.setStatus("1");
+    	device.setStatus(1);
         device.setCreateTime(new Date());
         logger.info("新增设备 = {}", JSONObject.toJSONString(device));
         deviceMapper.insertSelective(device);

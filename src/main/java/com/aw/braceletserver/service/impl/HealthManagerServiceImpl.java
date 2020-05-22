@@ -1,8 +1,8 @@
 package com.aw.braceletserver.service.impl;
 
 import com.aw.braceletserver.mapper.HealthMapper;
-import com.aw.braceletserver.entity.Health;
-import com.aw.braceletserver.entity.HealthExample;
+import com.aw.braceletserver.model.Health;
+import com.aw.braceletserver.model.HealthExample;
 import com.aw.braceletserver.service.HealthManagerService;
 import org.springframework.stereotype.Service;
 

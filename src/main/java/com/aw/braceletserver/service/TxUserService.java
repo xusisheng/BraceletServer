@@ -1,7 +1,7 @@
 package com.aw.braceletserver.service;
 
-import com.aw.braceletserver.entity.TxUser;
-import com.aw.braceletserver.entity.TxUserExample;
+import com.aw.braceletserver.model.TxUser;
+import com.aw.braceletserver.model.TxUserExample;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public interface TxUserService {
 
     Integer selectMaxUserId();
 
-    int countByExample(TxUserExample example);
+    long countByExample(TxUserExample example);
 
     int insertSelective(TxUser txUser);
 

@@ -2,8 +2,8 @@ package com.aw.braceletserver.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.aw.braceletserver.mapper.TxUserMapper;
-import com.aw.braceletserver.entity.TxUser;
-import com.aw.braceletserver.entity.TxUserExample;
+import com.aw.braceletserver.model.TxUser;
+import com.aw.braceletserver.model.TxUserExample;
 import com.aw.braceletserver.service.TxUserService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class TxUserServiceImpl implements TxUserService {
     }
 
     @Override
-    public int countByExample(TxUserExample example) {
+    public long countByExample(TxUserExample example) {
         logger.info("example = {}", JSON.toJSONString(example));
         return txUserMapper.countByExample(example);
     }

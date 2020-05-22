@@ -1,6 +1,6 @@
 package com.aw.braceletserver.service;
 
-import com.aw.braceletserver.entity.Health;
+import com.aw.braceletserver.model.Health;
 
 import java.util.List;
 

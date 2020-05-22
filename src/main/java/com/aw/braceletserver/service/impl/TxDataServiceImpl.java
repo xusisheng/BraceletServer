@@ -2,9 +2,9 @@ package com.aw.braceletserver.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.aw.braceletserver.constants.ResponseObject;
-import com.aw.braceletserver.entity.Device;
-import com.aw.braceletserver.entity.TxUser;
-import com.aw.braceletserver.entity.UserGroup;
+import com.aw.braceletserver.model.Device;
+import com.aw.braceletserver.model.TxUser;
+import com.aw.braceletserver.model.UserGroup;
 import com.aw.braceletserver.enums.StateEnum;
 import com.aw.braceletserver.service.*;
 import org.apache.commons.lang.StringUtils;
@@ -24,8 +24,6 @@ public class TxDataServiceImpl implements TxDataService {
     protected TxUserService txUserService;
     @Resource
     protected DeviceManagerService deviceManagerService;
-    @Resource
-    protected GroupManagerService groupManagerService;
     @Resource
     protected HealthManagerService healthManagerService;
 
@@ -167,8 +165,7 @@ public class TxDataServiceImpl implements TxDataService {
             responseObject.setState(StateEnum.DEVICE_NOT_EXIST);
             return false;
         }
-        String status = device.getStatus();
-        if (StringUtils.equalsIgnoreCase("3", status)){
+        if (3 ==  device.getStatus()){
             responseObject.setState(StateEnum.DEVICE_OFFLINE);
             return false;
         }

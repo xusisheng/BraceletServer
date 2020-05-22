@@ -1,9 +1,9 @@
 package com.aw.braceletserver.service;
 
-import com.aw.braceletserver.entity.Device;
-import com.aw.braceletserver.entity.DevicePosition;
-import com.aw.braceletserver.entity.Health;
-import com.aw.braceletserver.entity.UserGroup;
+import com.aw.braceletserver.model.Device;
+import com.aw.braceletserver.model.DevicePosition;
+import com.aw.braceletserver.model.Health;
+import com.aw.braceletserver.model.UserGroup;
 
 import java.util.Date;
 import java.util.List;

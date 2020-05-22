@@ -1,6 +1,6 @@
 package com.aw.braceletserver.service;
 
-import com.aw.braceletserver.entity.DeviceAlarmRecord;
+import com.aw.braceletserver.model.DeviceAlarmRecord;
 
 import java.util.List;
 

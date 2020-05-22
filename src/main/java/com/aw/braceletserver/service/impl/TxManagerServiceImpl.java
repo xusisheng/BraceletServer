@@ -2,7 +2,7 @@ package com.aw.braceletserver.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.aw.braceletserver.mapper.DeviceAlarmRecordMapper;
-import com.aw.braceletserver.entity.*;
+import com.aw.braceletserver.model.*;
 import com.aw.braceletserver.service.DeviceManagerService;
 import com.aw.braceletserver.service.HealthManagerService;
 import com.aw.braceletserver.service.TxManagerService;
