@@ -14,6 +14,10 @@ public class UnifyResponse<T> extends BaseEntity {
 		return new UnifyResponse<T>(CODE_SUCCESS, MSG_SUCCESS, data);
 	}
 
+	public static <T> UnifyResponse<T> success(String message) {
+		return new UnifyResponse<T>(CODE_SUCCESS, MSG_SUCCESS, message);
+	}
+
 	public static UnifyResponse failed() {
 		return new UnifyResponse(CODE_FAIL, MSG_FAIL);
 	}
@@ -27,9 +31,17 @@ public class UnifyResponse<T> extends BaseEntity {
 	/* 返回信息 */
 	public String description;
 	/* 错误消息 */
-	public String Message;
+	public String message;
 	/* 数据 */
 	public T result;
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
 	public int getErrorcode() {
 		return errorcode;
@@ -45,14 +57,6 @@ public class UnifyResponse<T> extends BaseEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getMessage() {
-		return Message;
-	}
-
-	public void setMessage(String message) {
-		Message = message;
 	}
 
 	public T getResult() {
@@ -79,6 +83,6 @@ public class UnifyResponse<T> extends BaseEntity {
 	public UnifyResponse(int errorcode, String description, String message) {
 		this.errorcode = errorcode;
 		this.description = description;
-		this.Message = message;
+		this.message = message;
 	}
 }

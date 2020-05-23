@@ -15,7 +15,7 @@ public interface ApiService {
 
     List<BraceletInfo> getPositionInfo(ReqPositionInfo req);
 
-    Boolean setWarningInfo(ReqWarningInfo req);
+    Boolean setWarningInfo(WarningInfo req);
 
     BraceletPushInfo getPushInfo();
 }

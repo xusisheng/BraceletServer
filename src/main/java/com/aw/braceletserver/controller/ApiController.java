@@ -3,19 +3,29 @@ package com.aw.braceletserver.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aw.braceletserver.entity.*;
-import com.aw.braceletserver.entity.oviphone.ReqDeviceList;
+import com.aw.braceletserver.enums.CommandEnum;
+import com.aw.braceletserver.enums.StateEnum;
+import com.aw.braceletserver.model.Device;
+import com.aw.braceletserver.model.DevicePosition;
+import com.aw.braceletserver.model.Health;
+import com.aw.braceletserver.model.UserGroup;
 import com.aw.braceletserver.properties.ApiUri;
-import com.aw.braceletserver.service.ApiService;
-import com.aw.braceletserver.service.DeviceAlarmRecordService;
-import com.aw.braceletserver.service.OviService;
+import com.aw.braceletserver.service.*;
 import com.aw.braceletserver.utils.JsonMapper;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.gavaghan.geodesy.Ellipsoid;
+import org.gavaghan.geodesy.GeodeticCalculator;
+import org.gavaghan.geodesy.GeodeticCurve;
+import org.gavaghan.geodesy.GlobalCoordinates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -29,6 +39,12 @@ public class ApiController {
     private ApiService apiService;
     @Autowired
     private DeviceAlarmRecordService deviceAlarmRecordService;
+    @Autowired
+    private DeviceManagerService deviceManagerService;
+    @Autowired
+    private HealthManagerService healthManagerService;
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @PostMapping("/logout")
     public String logout(UserInfo userInfo) {
@@ -45,28 +61,53 @@ public class ApiController {
     public RespGetList getList(UserInfo userInfo, @RequestBody UnifyRequest<ReqGetList> request) throws Exception {
         JSONArray ja = request.getParams().getIdlist();
         Integer limit = request.getParams().getLimit();
-
-        //获取用户下所有手环轨迹信息
-        List<BraceletTrack> list = apiService.getHistoryLocation(userInfo);
+        List<Integer> idlist = JsonMapper.toList(ja.toJSONString(), Integer.class);
         RespGetList<JSONArray> response = new RespGetList();
-        if (null != list) {
-            //依据手环ID过滤
-            List<BraceletTrack> ll = new ArrayList<>();
-            for(int i = 0; i < ja.size(); i++) {
-                Integer id = ja.getInteger(i);
-                for(int j = 0; j < list.size(); j++) {
-                    if (StringUtils.equals(String.valueOf(id), list.get(j).getDevid())) {
-                        ll.add(list.get(j));
-                    }
-                }
-            }
-            response.setTotal_num(ll.size());
-            response.setResult(ll);
-        } else {
-            response.setErrorcode(UnifyResponse.failed().getErrorcode());
-            response.setDescription(UnifyResponse.failed().getDescription());
+
+        //获取用户下所有手环
+        List<UserGroup> listUserGroup = deviceManagerService.selectByUserId(userInfo.getItem().getUserId());
+        if (listUserGroup == null || listUserGroup.size() == 0) {
+            BeanUtils.copyProperties(UnifyResponse.success("用户目前未绑定设备"), response);
+            return response;
         }
+
+        //循环检测
+        List<BraceletTrack> list = new ArrayList<>();
+        for (int i = 0; i < listUserGroup.size(); i++) {
+            // 判断是否需要查询的设备
+            UserGroup userGroup = listUserGroup.get(i);
+            Integer deviceId = userGroup.getDeviceId();
+            if (!idlist.contains(deviceId)) {
+                //不是
+                continue;
+            }
+
+            //查询设备最后的位置
+            DevicePosition devicePosition = deviceManagerService.getLastedDevicePositionByDeviceId(deviceId);
+            BraceletTrack braceletTrack = new BraceletTrack();
+            braceletTrack.setRecord_time(devicePosition.getDeviceUtcTime() == null ? "" : sdf.format(devicePosition.getDeviceUtcTime()));
+            braceletTrack.setLon(String.valueOf(devicePosition.getLongitude()));
+            braceletTrack.setLat(String.valueOf(devicePosition.getLatitude()));
+            braceletTrack.setDevid(String.valueOf(deviceId));
+            braceletTrack.setAt(String.valueOf(devicePosition.getAltitude()));
+            list.add(braceletTrack);
+        }
+        BeanUtils.copyProperties(UnifyResponse.success(), response);
+        response.setResult(list);
+        response.setTotal_num(list.size());
         return response;
+    }
+
+    /**大于30分钟手环未上报数据，判定为关机状态*/
+    private boolean offStatus(Date deviceUtcTime) {
+        if(deviceUtcTime==null) return true;
+
+        Date deviceDate = DateUtils.addHours(deviceUtcTime, 8);
+        Date compareDate =DateUtils.addMinutes(deviceDate, 30);
+        if(compareDate.before(new Date())) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -76,40 +117,48 @@ public class ApiController {
     @ResponseBody
     public UnifyResponse getStatus(UserInfo userInfo, @RequestBody UnifyRequest<ReqIdList> request)
     {
-        ReqIdList idList = request.getParams();
-        System.out.println(JsonMapper.toJson(idList));
+        List<Integer> idlist = JsonMapper.toList(request.getParams().getIdlist().toJSONString(), Integer.class);
 
-        UnifyResponse<JSONArray> response = new UnifyResponse();
-        response.setDescription("SUCCESS");
-        response.setErrorcode(0);
+        //获取用户下所有手环信息
+        List<UserGroup> listUserGroup = deviceManagerService.selectByUserId(userInfo.getItem().getUserId());
+        if (listUserGroup == null || listUserGroup.size() == 0) {
+            return UnifyResponse.success("用户目前未绑定设备");
+        }
 
         JSONArray ja = new JSONArray();
-        BraceletStatus bs1 = new BraceletStatus();
-        bs1.setIsonline(true);
-        bs1.setDevid("10000");
-        ja.add(bs1);
-        BraceletStatus bs2 = new BraceletStatus();
-        bs2.setIsonline(false);
-        bs2.setDevid("10000");
-        ja.add(bs2);
+        for (int i = 0; i < listUserGroup.size(); i++) {
+            // 判断是否需要查询的设备
+            UserGroup userGroup = listUserGroup.get(i);
+            Integer deviceId = userGroup.getDeviceId();
+            if (!idlist.contains(deviceId)) {
+                //不是
+                continue;
+            }
+
+            //查询设备最后的位置
+            DevicePosition devicePosition = deviceManagerService.getLastedDevicePositionByDeviceId(deviceId);
+            BraceletStatus braceletStatus = new BraceletStatus();
+            braceletStatus.setDevid(String.valueOf(deviceId));
+            if(offStatus(devicePosition.getDeviceUtcTime())) {
+                braceletStatus.setIsonline(false);
+            } else {
+                braceletStatus.setIsonline(true);
+            }
+            ja.add(braceletStatus);
+        }
+        UnifyResponse<JSONArray> response = UnifyResponse.success();
         response.setResult(ja);
         return response;
     }
 
     /**
-     * 手环状态设置
+     * 手环状态设置（无法远程关机，故接口无效）
      */
     @PostMapping("/shouhuan_setStatus")
     @ResponseBody
-    public UnifyResponse setStatus(@RequestBody UnifyRequest<ReqSetStatus> request)
+    public UnifyResponse setStatus(UserInfo userInfo, @RequestBody UnifyRequest<ReqSetStatus> request)
     {
-        ReqSetStatus req = request.getParams();
-        System.out.println(JsonMapper.toJson(req));
-
-        UnifyResponse<JSONArray> response = new UnifyResponse();
-        response.setDescription("SUCCESS");
-        response.setErrorcode(0);
-        return response;
+        return UnifyResponse.success("无法远程关机，故接口无效");
     }
 
     /**
@@ -117,26 +166,64 @@ public class ApiController {
      */
     @PostMapping("/shouhuan_getHrInfo")
     @ResponseBody
-    public UnifyResponse getHrInfo(@RequestBody UnifyRequest<ReqIdList> request)
+    public UnifyResponse getHrInfo(UserInfo userInfo, @RequestBody UnifyRequest<ReqIdList> request)
     {
-        ReqIdList idList = request.getParams();
-        System.out.println(JsonMapper.toJson(idList));
+        List<Integer> idlist = JsonMapper.toList(request.getParams().getIdlist().toJSONString(), Integer.class);
 
-        UnifyResponse<JSONArray> response = new UnifyResponse();
-        response.setDescription("SUCCESS");
-        response.setErrorcode(0);
+        //获取用户下所有手环信息
+        List<UserGroup> listUserGroup = deviceManagerService.selectByUserId(userInfo.getItem().getUserId());
+        if (listUserGroup == null || listUserGroup.size() == 0) {
+            return UnifyResponse.success("用户目前未绑定设备");
+        }
 
         JSONArray ja = new JSONArray();
-        BraceletInfo bs1 = new BraceletInfo();
-        bs1.setRecord_time("2018-11-22 01:56:45");
-        bs1.setLon("114.034833");
-        bs1.setLat("22.539651");
-        bs1.setDevid("10000");
-        bs1.setAt("0");
-        bs1.setHr("0");
-        ja.add(bs1);
+        for (int i = 0; i < listUserGroup.size(); i++) {
+            // 判断是否需要查询的设备
+            UserGroup userGroup = listUserGroup.get(i);
+            Integer deviceId = userGroup.getDeviceId();
+            if (!idlist.contains(deviceId)) {
+                //不是
+                continue;
+            }
+
+            //查询设备
+            Device device =deviceManagerService.getDeviceByDeviceId(deviceId);
+            //查询设备最后的位置
+            DevicePosition devicePosition = deviceManagerService.getLastedDevicePositionByDeviceId(deviceId);
+            //查询健康数据
+            Date endTime = devicePosition.getDeviceUtcTime();
+            Date startTime = DateUtils.addMinutes(endTime, -20);
+            List<Health> listHealth = healthManagerService.getHealthByUserDevice(userGroup.getUserId(), device.getSerialNumber(),startTime, endTime);
+
+            BraceletInfo braceletInfo = new BraceletInfo();
+            braceletInfo.setRecord_time(devicePosition.getDeviceUtcTime() == null ? "" : sdf.format(devicePosition.getDeviceUtcTime()));
+            braceletInfo.setLon(String.valueOf(devicePosition.getLongitude()));
+            braceletInfo.setLat(String.valueOf(devicePosition.getLatitude()));
+            braceletInfo.setAt(String.valueOf(devicePosition.getAltitude()));
+            braceletInfo.setDevid(String.valueOf(deviceId));
+            if (listHealth.size() > 0) {
+                //有健康数据
+                braceletInfo.setHr(String.valueOf(listHealth.get(0).getHeartBeat()));
+            }
+            ja.add(braceletInfo);
+        }
+        UnifyResponse<JSONArray> response = UnifyResponse.success();
         response.setResult(ja);
         return response;
+    }
+
+    /**
+     * 计算两点（经纬度）之间距离
+     *
+     * @param gpsFrom
+     * @param gpsTo
+     * @param ellipsoid
+     * @return 返回距离（米）
+     */
+    public static double getDistanceMeter(GlobalCoordinates gpsFrom, GlobalCoordinates gpsTo, Ellipsoid ellipsoid) {
+        //创建GeodeticCalculator，调用计算方法，传入坐标系、经纬度用于计算距离
+        GeodeticCurve geoCurve = new GeodeticCalculator().calculateGeodeticCurve(ellipsoid, gpsFrom, gpsTo);
+        return geoCurve.getEllipsoidalDistance();
     }
 
     /**
@@ -144,24 +231,55 @@ public class ApiController {
      */
     @PostMapping("/shouhuan_getPositionInfo")
     @ResponseBody
-    public UnifyResponse getPositionInfo(@RequestBody UnifyRequest<ReqPositionInfo> request)
+    public UnifyResponse getPositionInfo(UserInfo userInfo, @RequestBody UnifyRequest<ReqPositionInfo> request)
     {
         ReqPositionInfo req = request.getParams();
-        System.out.println(JsonMapper.toJson(req));
+        Double radio = Double.parseDouble(req.getRadio());
+        GlobalCoordinates source = new GlobalCoordinates(Double.parseDouble(req.getLon()), Double.parseDouble(req.getLat()));
 
-        UnifyResponse<JSONArray> response = new UnifyResponse();
-        response.setDescription("SUCCESS");
-        response.setErrorcode(0);
+        //获取用户下所有手环信息
+        List<UserGroup> listUserGroup = deviceManagerService.selectByUserId(userInfo.getItem().getUserId());
+        if (listUserGroup == null || listUserGroup.size() == 0) {
+            return UnifyResponse.success("用户目前未绑定设备");
+        }
 
         JSONArray ja = new JSONArray();
-        BraceletInfo bs1 = new BraceletInfo();
-        bs1.setRecord_time("2018-11-22 01:56:45");
-        bs1.setLon("114.034833");
-        bs1.setLat("22.539651");
-        bs1.setDevid("10000");
-        bs1.setAt("0");
-        bs1.setHr("0");
-        ja.add(bs1);
+        for (int i = 0; i < listUserGroup.size(); i++) {
+            // 判断是否需要查询的设备
+            UserGroup userGroup = listUserGroup.get(i);
+            Integer deviceId = userGroup.getDeviceId();
+
+            //查询设备最后的位置
+            DevicePosition devicePosition = deviceManagerService.getLastedDevicePositionByDeviceId(deviceId);
+
+            //计算该设备与原点之间距离 Ellipsoid.Sphere 或者 Ellipsoid.WGS84
+            GlobalCoordinates target = new GlobalCoordinates(devicePosition.getLongitude().doubleValue(), devicePosition.getLatitude().doubleValue());
+            Double distince = getDistanceMeter(source, target, Ellipsoid.Sphere);
+            if (distince > radio) {
+                //设备超出距离
+                continue;
+            }
+
+            //查询设备
+            Device device =deviceManagerService.getDeviceByDeviceId(deviceId);
+            //查询健康数据
+            Date endTime = devicePosition.getDeviceUtcTime();
+            Date startTime = DateUtils.addMinutes(endTime, -20);
+            List<Health> listHealth = healthManagerService.getHealthByUserDevice(userGroup.getUserId(), device.getSerialNumber(),startTime, endTime);
+
+            BraceletInfo braceletInfo = new BraceletInfo();
+            braceletInfo.setRecord_time(devicePosition.getDeviceUtcTime() == null ? "" : sdf.format(devicePosition.getDeviceUtcTime()));
+            braceletInfo.setLon(String.valueOf(devicePosition.getLongitude()));
+            braceletInfo.setLat(String.valueOf(devicePosition.getLatitude()));
+            braceletInfo.setAt(String.valueOf(devicePosition.getAltitude()));
+            braceletInfo.setDevid(String.valueOf(deviceId));
+            if (listHealth.size() > 0) {
+                //有健康数据
+                braceletInfo.setHr(String.valueOf(listHealth.get(0).getHeartBeat()));
+            }
+            ja.add(braceletInfo);
+        }
+        UnifyResponse<JSONArray> response = UnifyResponse.success();
         response.setResult(ja);
         return response;
     }
@@ -171,23 +289,41 @@ public class ApiController {
      */
     @PostMapping("/shouhuan_setWarningInfo")
     @ResponseBody
-    public UnifyResponse setWarningInfo(@RequestBody UnifyRequest<ReqWarningInfo> request)
+    public UnifyResponse setWarningInfo(UserInfo userInfo, @RequestBody UnifyRequest<ReqResultList> request)
     {
-        ReqWarningInfo req = request.getParams();
-        System.out.println(JsonMapper.toJson(req));
-
-        UnifyResponse<JSONArray> response = new UnifyResponse();
-        response.setDescription("SUCCESS");
-        response.setErrorcode(0);
-        return response;
+        JSONArray ja = request.getParams().getResult();
+        for (int i = 0; i < ja.size(); i++) {
+            JSONObject jo = ja.getJSONObject(i);
+            WarningInfo warningInfo = jo.toJavaObject(WarningInfo.class);
+            switch(warningInfo.getType()) {
+                case 1:     //心率
+                    //TODO 心率参数格式检查
+                    String[] item = warningInfo.getValueinfo().split("-");
+                    //TODO 验证设备在线
+                    CommandEnum commandEnum = CommandEnum.getCommandEnumByCode("NB03");
+                    if (commandEnum == null) {
+                        UnifyResponse<JSONArray> response = UnifyResponse.failed("未知的指令");
+                        response.setErrorcode(StateEnum.OTHER.getCode());
+                        return response;
+                    }
+                    //保存指令
+                    //TODO 如何下发到设备？数据库没有设备命令表
+//                    deviceCommandManagerService.saveCommand(deviceId, deviceModel, commandEnum, params, responseObject);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return UnifyResponse.success();
     }
 
     /**
      * 手环推送信息
+     * 指张家口滑雪场需要获得的手环信息，通过socket推送，现在改为通过get接口获取，但是获取哪个手环的信息呢？
      */
     @PostMapping("/shouhuan_getInfo")
     @ResponseBody
-    public RespGetInfo getPushInfo(@RequestBody(required = false) UnifyRequest request)
+    public RespGetInfo getPushInfo(UserInfo userInfo, @RequestBody(required = false) UnifyRequest request)
     {
         RespGetInfo<JSONArray> response = new RespGetInfo();
         response.setCode(0);
@@ -214,20 +350,17 @@ public class ApiController {
      */
     @GetMapping("/shouhuan_sosFeedback")
     @ResponseBody
-    public UnifyResponse sosFeedback(@RequestParam("bang_id") String bangId,
+    public UnifyResponse sosFeedback(UserInfo userInfo,
+                                     @RequestParam("bang_id") String bangId,
                                      @RequestParam("time") String time,
                                      @RequestParam("sing") String sing)
     {
-        UnifyResponse response = new UnifyResponse();
         String str = bangId + "_" + time + "_dhcc";
         String sign = DigestUtils.md5DigestAsHex(str.getBytes());
         if (StringUtils.equals(sign, sing)) {
-            response.setDescription("SUCCESS");
-            response.setErrorcode(0);
+            return UnifyResponse.success();
         } else {
-            response.setDescription("Failed");
-            response.setErrorcode(-1);
+            return UnifyResponse.failed();
         }
-        return response;
     }
 }

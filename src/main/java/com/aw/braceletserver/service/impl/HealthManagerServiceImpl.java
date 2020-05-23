@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -23,13 +24,13 @@ public class HealthManagerServiceImpl implements HealthManagerService {
     }
 
     @Override
-    public List<Health> getHealthByUserDevice(int userId, String deviceSerialNum, String startTime, String endTime) throws Exception{
+    public List<Health> getHealthByUserDevice(int userId, String deviceSerialNum, Date startTime, Date endTime) {
         HealthExample healthExample = new HealthExample();
         HealthExample.Criteria criteria = healthExample.createCriteria();
         criteria.andUserIdEqualTo(userId);
         criteria.andDeviceSerialNumEqualTo(deviceSerialNum);
-        criteria.andCreateTimeGreaterThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime));
-        criteria.andCreateTimeLessThanOrEqualTo(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(endTime));
+        criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
+        criteria.andCreateTimeLessThanOrEqualTo(endTime);
         return healthMapper.selectByExample(healthExample);
     }
 }

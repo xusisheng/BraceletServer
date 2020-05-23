@@ -1602,6 +1602,38 @@ public class DateUtil {
 		return sdfLongTimePlus.parse(sdfLongTimePlus.format(date));
 	}
 
+	/**
+	 * 计算当前时间几小时之后的时间
+	 *
+	 * @param date
+	 * @param hours
+	 * @return
+	 */
+	public static Date addHours(Date date, long hours) {
+		return addMinutes(date, hours * 60);
+	}
+
+	/**
+	 * 计算当前时间几分钟之后的时间
+	 *
+	 * @param date
+	 * @param minutes
+	 * @return
+	 */
+	public static Date addMinutes(Date date, long minutes) {
+		return addSeconds(date, minutes * 60);
+	}
+
+	/**
+	 * @param date1
+	 * @param secs
+	 * @return
+	 */
+
+	public static Date addSeconds(Date date1, long secs) {
+		return new Date(date1.getTime() + (secs * 1000));
+	}
+
 	public static void main(String[] args) {
 		try {
 

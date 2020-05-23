@@ -1,6 +1,5 @@
 package com.aw.braceletserver.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.aw.braceletserver.entity.*;
 import com.aw.braceletserver.entity.oviphone.PersonDeviceInfo;
 import com.aw.braceletserver.entity.oviphone.ReqDeviceList;
@@ -64,7 +63,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public Boolean setWarningInfo(ReqWarningInfo req) {
+    public Boolean setWarningInfo(WarningInfo req) {
         return null;
     }
 
