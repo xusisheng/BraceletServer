@@ -3,10 +3,11 @@ package com.aw.braceletserver.mapper;
 import com.aw.braceletserver.model.UserGroup;
 import com.aw.braceletserver.model.UserGroupExample;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+@Mapper
 public interface UserGroupMapper {
     long countByExample(UserGroupExample example);
 

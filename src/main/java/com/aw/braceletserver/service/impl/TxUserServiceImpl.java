@@ -5,7 +5,7 @@ import com.aw.braceletserver.mapper.TxUserMapper;
 import com.aw.braceletserver.model.TxUser;
 import com.aw.braceletserver.model.TxUserExample;
 import com.aw.braceletserver.service.TxUserService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

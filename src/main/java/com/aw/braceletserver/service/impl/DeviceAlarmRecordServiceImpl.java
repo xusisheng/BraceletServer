@@ -1,16 +1,18 @@
 package com.aw.braceletserver.service.impl;
 
+import com.aw.braceletserver.mapper.DeviceAlarmRecordMapper;
 import com.aw.braceletserver.model.DeviceAlarmRecord;
 import com.aw.braceletserver.service.DeviceAlarmRecordService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 public class DeviceAlarmRecordServiceImpl implements DeviceAlarmRecordService {
 
-//    @Autowired
-//    private DeviceAlarmRecordMapper deviceAlarmRecordMapper;
+    @Resource
+    private DeviceAlarmRecordMapper deviceAlarmRecordMapper;
 
     @Override
     public List<DeviceAlarmRecord> selectRecordByDeviceId(int deviceId, int selectCounts) {

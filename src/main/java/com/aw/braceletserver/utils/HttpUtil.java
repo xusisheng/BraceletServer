@@ -1,7 +1,7 @@
 package com.aw.braceletserver.utils;
 
 import com.aw.braceletserver.constants.Constant;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;

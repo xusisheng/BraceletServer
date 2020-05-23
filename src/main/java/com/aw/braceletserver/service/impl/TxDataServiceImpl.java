@@ -2,12 +2,12 @@ package com.aw.braceletserver.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.aw.braceletserver.constants.ResponseObject;
+import com.aw.braceletserver.enums.StateEnum;
 import com.aw.braceletserver.model.Device;
 import com.aw.braceletserver.model.TxUser;
 import com.aw.braceletserver.model.UserGroup;
-import com.aw.braceletserver.enums.StateEnum;
 import com.aw.braceletserver.service.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

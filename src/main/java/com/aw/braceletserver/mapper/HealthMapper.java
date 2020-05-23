@@ -3,10 +3,11 @@ package com.aw.braceletserver.mapper;
 import com.aw.braceletserver.model.Health;
 import com.aw.braceletserver.model.HealthExample;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+@Mapper
 public interface HealthMapper {
     long countByExample(HealthExample example);
 

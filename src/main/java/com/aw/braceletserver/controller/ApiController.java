@@ -6,6 +6,7 @@ import com.aw.braceletserver.entity.*;
 import com.aw.braceletserver.entity.oviphone.ReqDeviceList;
 import com.aw.braceletserver.properties.ApiUri;
 import com.aw.braceletserver.service.ApiService;
+import com.aw.braceletserver.service.DeviceAlarmRecordService;
 import com.aw.braceletserver.service.OviService;
 import com.aw.braceletserver.utils.JsonMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -26,10 +27,13 @@ public class ApiController {
     private ApiUri apiUri;
     @Autowired
     private ApiService apiService;
+    @Autowired
+    private DeviceAlarmRecordService deviceAlarmRecordService;
 
     @PostMapping("/logout")
     public String logout(UserInfo userInfo) {
         System.out.println("==========");
+        deviceAlarmRecordService.selectRecordByDeviceId(0, 0);
         return "aaaaaa";
     }
 

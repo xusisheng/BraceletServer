@@ -5,10 +5,10 @@ import com.aw.braceletserver.model.TxUserExample;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
+@Mapper
 public interface TxUserMapper {
     long countByExample(TxUserExample example);
 
