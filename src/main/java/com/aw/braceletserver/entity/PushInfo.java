@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * 手环推送信息
  */
-public class BraceletPushInfo {
+public class PushInfo {
     /**
      * 消息类型1 sos 0gps
      */
@@ -17,11 +17,11 @@ public class BraceletPushInfo {
     /**
      * 舒张压  mmHg
      */
-    private Integer dbp;
+    private Float dbp;
     /**
      * 收缩压  mmHg
      */
-    private Integer sbp;
+    private Float sbp;
     /**
      * 设备id
      */
@@ -67,19 +67,19 @@ public class BraceletPushInfo {
         this.altitude = altitude;
     }
 
-    public Integer getDbp() {
+    public Float getDbp() {
         return dbp;
     }
 
-    public void setDbp(Integer dbp) {
+    public void setDbp(Float dbp) {
         this.dbp = dbp;
     }
 
-    public Integer getSbp() {
+    public Float getSbp() {
         return sbp;
     }
 
-    public void setSbp(Integer sbp) {
+    public void setSbp(Float sbp) {
         this.sbp = sbp;
     }
 

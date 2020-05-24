@@ -181,8 +181,8 @@ public class DeviceManagerServiceImpl implements DeviceManagerService {
     }
 
     @Override
-    public List<Map<String, Object>> selectAllDeviceData() {
-        return txUserMapper.selectAllDeviceData();
+    public List<Map<String, Object>> selectDeviceDataByUserId(int userId) {
+        return txUserMapper.selectDeviceDataByUserId(userId);
     }
 
     @Override

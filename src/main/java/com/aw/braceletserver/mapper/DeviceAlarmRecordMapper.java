@@ -3,6 +3,7 @@ package com.aw.braceletserver.mapper;
 import com.aw.braceletserver.model.DeviceAlarmRecord;
 import com.aw.braceletserver.model.DeviceAlarmRecordExample;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,4 +31,8 @@ public interface DeviceAlarmRecordMapper {
     int updateByPrimaryKeySelective(DeviceAlarmRecord record);
 
     int updateByPrimaryKey(DeviceAlarmRecord record);
+
+    List<Map<String, Object>> selectAlarmDeviceDataByUserId(DeviceAlarmRecordExample example);
+
+    List<Map<String, Object>> selectAlarmDeviceDataByUserId(Map<String, Object> map);
 }

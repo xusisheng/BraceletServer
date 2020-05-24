@@ -467,22 +467,26 @@
     </if>
   </select>
 
-  <select id="selectAllDeviceData"  resultType="java.util.Map">
+  <select id="selectDeviceDataByUserId" parameterType="java.lang.Integer" resultType="java.util.Map">
     select d.device_id deviceId, d.device_name deviceName, d.nick_name nickName,
 		tu.user_id userId, tu.user_name userName,
-		IFNULL(h2.BLOOD_SUGAR,0) bloodSugar, IFNULL(h2.DISASTOLIC,0) disastolic, IFNULL(h2.SHRINK,0) shrink, IFNULL(h2.HEART_BEAT,0) heartBeat,
-		IFNULL(h2.BLOOD_PRESSURE,0) bloodPressure, IFNULL(h2.BODY_TEMPERATURE,0) bodyTemperature, IFNULL(h2.steps,0) steps,
-		IFNULL(dp2.latitude,0) latitude, IFNULL(dp2.longitude,0) longitude, IFNULL(dp2.altitude,0) altitude, IFNULL(dp2.online_status,0) onlineStatus
-    from device d
-    left join tx_user tu on d.device_id = tu.device_id
-    left join
+		IFNULL(h2.BLOOD_SUGAR,0) bloodSugar, IFNULL(h2.DISASTOLIC,0) disastolic, IFNULL(h2.SHRINK,0) shrink,
+		IFNULL(h2.HEART_BEAT,0) heartBeat, IFNULL(h2.BLOOD_PRESSURE,0) bloodPressure,
+		IFNULL(h2.BODY_TEMPERATURE,0) bodyTemperature, IFNULL(h2.steps,0) steps,
+		IFNULL(dp2.latitude,0) latitude, IFNULL(dp2.longitude,0) longitude, IFNULL(dp2.altitude,0) altitude,
+		IFNULL(dp2.online_status,0) onlineStatus, IFNULL(dp2.device_utc_time,0) deviceUtcTime
+	from device d
+	left join user_group ug on d.device_id = ug.device_id
+	left join tx_user tu on tu.user_id = ug.user_id
+	left join
       (select * from health
         where id in (select max(h.id) from health h  group by h.DEVICE_SERIAL_NUM )
       ) h2 on d.SERIAL_NUMBER = h2.DEVICE_SERIAL_NUM
-    left join (
+	left join (
         select * from device_position
         where id in (
           select max(dp.id) from device_position dp  group by dp.device_id )
         ) dp2 on d.device_id = dp2.device_id
+	where tu.user_id = #{userId,jdbcType=INTEGER}
   </select>
 </mapper>

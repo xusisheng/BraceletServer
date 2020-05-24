@@ -36,5 +36,5 @@ public interface TxUserMapper {
 
     Integer selectMaxId();
 
-    List<Map<String, Object>> selectAllDeviceData();
+    List<Map<String, Object>> selectDeviceDataByUserId(int userId);
 }

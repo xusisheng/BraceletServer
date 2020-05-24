@@ -17,5 +17,5 @@ public interface ApiService {
 
     Boolean setWarningInfo(WarningInfo req);
 
-    BraceletPushInfo getPushInfo();
+    PushInfo getPushInfo();
 }

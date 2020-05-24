@@ -492,4 +492,26 @@
       battery = #{battery,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectAlarmDeviceDataByUserId" parameterType="java.util.Map" resultType="java.util.Map">
+    select dar.user_id userId, tu.user_name userName, dar.device_id deviceId, dar.device_name deviceName, dar.nickname nickName,
+		IFNULL(h2.BLOOD_SUGAR,0) bloodSugar, IFNULL(h2.DISASTOLIC,0) disastolic, IFNULL(h2.SHRINK,0) shrink,
+		IFNULL(h2.HEART_BEAT,0) heartBeat, IFNULL(h2.BLOOD_PRESSURE,0) bloodPressure,
+		IFNULL(h2.BODY_TEMPERATURE,0) bodyTemperature, IFNULL(h2.steps,0) steps,
+		IFNULL(dar.latitude,0) latitude, IFNULL(dar.longitude,0) longitude, IFNULL(dar.altitude,0) altitude,
+		IFNULL(dp2.online_status,0) onlineStatus, IFNULL(dar.create_time,0) deviceUtcTime
+    from (select dar.* from device_alarm_record dar INNER JOIN device on dar.device_id = device.DEVICE_ID
+			where dar.user_id = #{userId,jdbcType=INTEGER} and unix_timestamp(dar.create_time) > unix_timestamp(#{startTime,jdbcType=VARCHAR})
+			) dar
+    left join tx_user tu on dar.device_id = tu.device_id
+    left join
+      (select * from health
+        where id in (select max(h.id) from health h  group by h.DEVICE_SERIAL_NUM )
+      ) h2 on dar.SERIAL_NUMBER = h2.DEVICE_SERIAL_NUM
+    left join (
+        select * from device_position
+        where id in (
+          select max(dp.id) from device_position dp  group by dp.device_id )
+        ) dp2 on dar.device_id = dp2.device_id
+  </select>
 </mapper>

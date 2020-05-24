@@ -68,7 +68,7 @@ public class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public BraceletPushInfo getPushInfo() {
+    public PushInfo getPushInfo() {
         return null;
     }
 }

@@ -2,11 +2,6 @@ package com.aw.braceletserver.constants;
 
 /**系统常用常量*/
 public final class Constant {
-	
-	
-	
-	
-	
 	public static final String SerialNumber = "SerialNumber";
 	public static final String Token = "Token";
 	public static final String DeviceId = "DeviceId";
@@ -161,8 +156,22 @@ public final class Constant {
 	/**
 	 * 字符集
 	 */
-	public static interface CHARSET {
+	public  interface CHARSET {
 		String GBK = "GBK";
 		String UTF8 = "UTF-8";
+	}
+
+	/**
+	 * 客户主动获取的推送信息类型
+	 */
+	public class PushInfoType {
+		/**
+		 * GPS
+		 */
+		public static final int GPS = 0;
+		/**
+		 * SOS
+		 */
+		public static final int SOS = 1;
 	}
 }

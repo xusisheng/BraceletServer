@@ -107,7 +107,7 @@ public interface DeviceManagerService {
      * 查询所有设备实时信息
      * @return
      */
-    List<Map<String, Object>> selectAllDeviceData();
+    List<Map<String, Object>> selectDeviceDataByUserId(int userId);
 
     /**
      * 查询时间段内的设备健康数据

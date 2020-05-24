@@ -1,5 +1,6 @@
 package com.aw.braceletserver.utils;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.DateFormatSymbols;
@@ -8,16 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * <p>
- * 公共方法类
- * </p>
- * <p>
  * 提供有关日期的实用方法集
- * </p>
- * 
- * @author www.jeecg.org
- * @version 1.0
- * 
  */
 
 public class DateUtil {
@@ -34,7 +26,23 @@ public class DateUtil {
 	static SimpleDateFormat sdfMd = new SimpleDateFormat("MM月dd日");
 	private static long DAY_IN_MILLISECOND = 0x5265c00L;
 
+
+	static String partterns[] = {
+			"yyyy-MM-dd",
+			"yyyy-MM-dd HH:mm:ss"
+	};
+
+
 	public DateUtil() {
+	}
+
+	public static Boolean isValidDate(String strDate) {
+		try {
+			Date dt = DateUtils.parseDate(strDate, partterns);
+			return true;
+		} catch (ParseException e) {
+		}
+		return false;
 	}
 
 	/**
