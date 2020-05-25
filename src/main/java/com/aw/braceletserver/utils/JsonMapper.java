@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
@@ -69,6 +70,51 @@ public abstract class JsonMapper {
 		}
 		return object;
 	}
+
+	/**
+	 * Method that will convert from given value into instance of given value
+	 * type.
+	 *
+	 * @param fromValue
+	 * @param toValueType
+	 * @return
+	 * @throws
+	 */
+	private static <T> T convertValue(Object fromValue, Class<T> toValueType)
+			throws Exception {
+		try {
+			return mapper.convertValue(fromValue, toValueType);
+		} catch (IllegalArgumentException e) {
+			throw new Exception(e);
+		}
+	}
+
+	/**
+	 * Method that will convert object to the ObjectNode.
+	 *
+	 * @param object
+	 *            the source data; if null, will return null.
+	 * @return the ObjectNode data after converted.
+	 * @throws
+	 */
+	public static <T> ObjectNode convertObject2ObjectNode(T object)
+			throws Exception {
+		if (null == object) {
+			return null;
+		}
+
+		ObjectNode objectNode = null;
+
+		if (object instanceof String) {
+			objectNode = toObject((String) object,
+					ObjectNode.class);
+		} else {
+			objectNode = convertValue(object, ObjectNode.class);
+		}
+
+		return objectNode;
+	}
+
 
 	/**
 	 * 将json字符串转换为java.util.Map,键值类型都为java.lang.String

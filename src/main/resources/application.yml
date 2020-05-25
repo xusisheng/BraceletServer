@@ -53,6 +53,11 @@ logging:
       aw:
         braceletserver: debug
 
+#电信IoT平台参数
+iot:
+  appId: FAsFKM6Yi8eHnjl2ZJj2S4_PV8Ua
+  secret: DpylMllxykAAD6eW30fAAMfsBDEa
+
 oviphone:
   presetuser:
     name: aowei

@@ -5,7 +5,6 @@ import com.aw.braceletserver.entity.LoginResult;
 import com.aw.braceletserver.entity.UserInfo;
 import com.aw.braceletserver.properties.PresetUser;
 import com.aw.braceletserver.service.UserService;
-import com.aw.braceletserver.utils.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -42,7 +41,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
         String requestPath = request.getRequestURI();
-        logger.debug("requestIp: " + IpUtil.getIpAddress(request));
+//        logger.debug("requestIp: " + IpUtil.getIpAddress(request));
         logger.debug("Method: " + method.getName() + ", IgnoreSecurity: " + method.isAnnotationPresent(IgnoreSecurity.class));
         logger.debug("requestPath: " + requestPath);
         if (requestPath.contains("/swagger") || requestPath.contains("/configuration/ui")) {

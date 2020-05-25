@@ -1,8 +1,8 @@
-package com.aw.braceletserver.iot.entity;
+package com.aw.braceletserver.entity;
 
 import com.aw.braceletserver.entity.BaseEntity;
 
-public class AccessToken extends BaseEntity {
+public class IotAccessToken extends BaseEntity {
     private String scope;
     private String tokenType;
     private Integer expiresIn;
