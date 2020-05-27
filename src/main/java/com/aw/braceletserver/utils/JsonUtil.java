@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang3.StringUtils;
+import com.github.pagehelper.util.StringUtil;
 
 import java.io.IOException;
 
@@ -73,8 +73,7 @@ public class JsonUtil {
     /**
      * Method that will convert object to the ObjectNode.
      *
-     * @param object
-     *            the source data; if null, will return null.
+     * @param object the source data; if null, will return null.
      * @return the ObjectNode data after converted.
      * @throws
      */
@@ -108,7 +107,7 @@ public class JsonUtil {
      */
     public static <T> T convertJsonStringToObject(String jsonString,
             Class<T> cls) throws Exception {
-        if (StringUtils.isBlank(jsonString)) {
+        if (StringUtil.isEmpty(jsonString)) {
             return null;
         }
 
@@ -127,7 +126,7 @@ public class JsonUtil {
      * @param fromValue
      * @param toValueType
      * @return
-     * @throws
+     * @throws JsonException
      */
     private static <T> T convertValue(Object fromValue, Class<T> toValueType)
             throws Exception {

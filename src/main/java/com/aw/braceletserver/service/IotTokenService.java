@@ -7,24 +7,22 @@ import com.aw.braceletserver.huawei.utils.StreamClosedHttpResponse;
 import com.aw.braceletserver.utils.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class IotTokenService {
-    private Logger logger = LoggerFactory.getLogger(IotTokenService.class);
+    private static Logger logger = LoggerFactory.getLogger(IotTokenService.class);
 
     private static IotAccessToken token = new IotAccessToken();
 
 //    @Scheduled(cron="* * * * * ?")
 //    @PostConstruct  //系统启动时立即执行一次
     // 大概50分钟获取1次token，单位:ms
-    @Scheduled(fixedRate = 1000*50)
-    private void getIotToken() throws Exception {
+//    @Scheduled(fixedRate = 1000*50)
+    private static void getIotToken() throws Exception {
         logger.info("--启动定时获取IoT平台令牌任务--");
         HttpsUtil httpsUtil = new HttpsUtil();
         httpsUtil.initSSLConfigForTwoWay();
@@ -52,8 +50,11 @@ public class IotTokenService {
         token.setTokenType(data.get("tokenType"));
     }
 
-    public static IotAccessToken getToken() {
+    public static IotAccessToken getToken() throws Exception {
         synchronized (token) {
+            if (token.getAccessToken() == null) {
+                IotTokenService.getIotToken();
+            }
             return token;
         }
     }

@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,106 +22,236 @@ import java.io.InputStream;
  * 电信IoT平台接口
  */
 @RestController
-@RequestMapping("")
+@RequestMapping("/iot")
 public class IotController {
     private static final Logger logger = LoggerFactory.getLogger(IotController.class);
 
     @Autowired
     private TxManagerService txManagerService;
 
-    /**
-     * 数据上送
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/uploadData", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> uploadData(HttpServletRequest request, HttpServletResponse response) {
-
-        String log = "数据上送";
-
+    @PostMapping("/device/bind")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> bindDevice(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "绑定设备";
         try {
             InputStream is = request.getInputStream();
             String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
             is.close();
-            logger.info("{}请求数据：{}", log, req_str);
-            if (StringUtils.isBlank(req_str)) {
-                logger.warn("{}请求数据为空", log);
-            }
-
-            JSONObject jo = JSON.parseObject(req_str);
-            boolean result = txManagerService.uploadDeviceData(jo);
-            logger.info("数据上报后台处理结果：{}", result);
+            logger.info("{}: {}", strNotify, req_str);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IOException e) {
-            logger.info(e.getMessage());
+            logger.warn("{}: {}", strNotify, e.getMessage());
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
     }
 
-    /**
-     * 通知指令给设备
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/notifyDevice", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> notifyDevice(HttpServletRequest request, HttpServletResponse response) {
-        //TODO
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/device/added")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> deviceAdded(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "添加新设备";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
     }
 
-    /**
-     * 设备事件上报
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/deviceEvent", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> deviceEvent(HttpServletRequest request, HttpServletResponse response) {
-        //TODO
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/device/info/changed")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> deviceInfoChanged(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "设备信息变化";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
     }
 
-    /**
-     * 设备信息变化
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/deviceInfoChange", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> deviceInfoChange(HttpServletRequest request, HttpServletResponse response) {
-        //TODO
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/device/data/changed")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> deviceDataChanged(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "设备数据变化";
+        try {
+            //设备数据变化: {"notifyType":"deviceDataChanged","deviceId":"4955fab4-11e1-440a-822b-15a229013d16","gatewayId":"4955fab4-11e1-440a-822b-15a229013d16","requestId":null,"service":{"serviceId":"NBWatch","serviceType":"NBWatch","data":{"MessageType":"UPLOAD","DeviceID":"862177041313308","Location":"E4294967296 N0429496729","HeartRate":"071","Elevation":"+00121","Atmosphere":"999.76","Battery":"060","DeviceTime":"2020-05-27 16:36:07","IMEI":"460113004304696","Temperature":"+27.90","Steps":"001114"},"eventTime":"20200527T083613Z"}}
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
     }
 
-    /**
-     * 设备服务信息变更
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/deviceServiceChange", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> deviceInfochange(HttpServletRequest request, HttpServletResponse response) {
-        //TODO
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/device/datas/changed")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> deviceDatasChanged(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "设备数据批量变化";
+        try {
+            //设备数据批量变化: {"notifyType":"deviceDatasChanged","requestId":null,"deviceId":"4955fab4-11e1-440a-822b-15a229013d16","gatewayId":"4955fab4-11e1-440a-822b-15a229013d16","services":[{"serviceId":"NBWatch","serviceType":"NBWatch","data":{"MessageType":"UPLOAD","DeviceID":"862177041313308","Location":"E4294967296 N0429496729","HeartRate":"071","Elevation":"+00121","Atmosphere":"999.76","Battery":"060","DeviceTime":"2020-05-27 16:36:07","IMEI":"460113004304696","Temperature":"+27.90","Steps":"001114"},"eventTime":"20200527T083613Z"}]}
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
     }
 
-    /**
-     * 消息命令确认
-     *
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/notifyConfirm", method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> notifyConfirm(HttpServletRequest request, HttpServletResponse response) {
-        //TODO
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/device/deleted")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> deviceDeleted(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "删除设备";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PostMapping("/service/info/changed")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> serviceInfoChanged(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "服务信息变化";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PostMapping("/rule/event")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> ruleEvent(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "规则事件";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PostMapping("/device/model/added")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> deviceModelAdded(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "添加设备模型";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PostMapping("/device/model/deleted")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> deviceModelDeleted(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "删除设备模型";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PostMapping("/sw/upgrade/state/change/notify")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> swUpgradeStateChangeNotify(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "软件升级状态变更通";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PostMapping("/sw/upgrade/result/notify")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> swUpgradeResultNotify(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "软件升级结果通知";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PostMapping("/fw/upgrade/state/change/notify")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> fwUpgradeStateChangeNotify(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "固件升级状态变更通";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
+    }
+
+    @PostMapping("/fw/upgrade/result/notify")
+    @ResponseBody
+    public ResponseEntity<HttpStatus> fwUpgradeResultNotify(HttpServletRequest request, HttpServletResponse response) {
+        String strNotify = "固件升级结果通知";
+        try {
+            InputStream is = request.getInputStream();
+            String req_str = IOUtils.toString(is, Constant.CHARSET.UTF8);
+            is.close();
+            logger.info("{}: {}", strNotify, req_str);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            logger.warn("{}: {}", strNotify, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+        }
     }
 }

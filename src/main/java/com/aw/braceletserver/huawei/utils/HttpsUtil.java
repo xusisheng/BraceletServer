@@ -1,5 +1,6 @@
 package com.aw.braceletserver.huawei.utils;
 
+import com.aw.braceletserver.utils.JsonUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -124,6 +125,7 @@ public class HttpsUtil {
 		request.setEntity(new StringEntity(content,
 				ContentType.APPLICATION_JSON));
 
+		System.out.println("doPostJson = " + JsonUtil.jsonObj2Sting(request));
 		return executeHttpRequest(request);
 	}
 	

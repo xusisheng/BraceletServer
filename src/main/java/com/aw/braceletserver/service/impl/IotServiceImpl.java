@@ -28,16 +28,16 @@ public class IotServiceImpl implements IotService {
         String appId = Constant.APPID;
 
         //please replace the deviceId, when you use the demo.
-        String deviceId = "0aef0cc0-2da4-4cfa-9bf7-aa8a950ae14f";
-        String callbackUrl = Constant.REPORT_CMD_EXEC_RESULT_CALLBACK_URL;
+        String deviceId = "98525533-0588-4000-b2c2-11d800a2d328";
+        String callbackUrl = "";//Constant.REPORT_CMD_EXEC_RESULT_CALLBACK_URL;
         Integer maxRetransmit = 3;
 
         //please replace the following parameter values, when you use the demo.
         //And those parameter values must be consistent with the content of profile that have been preset to IoT platform.
         //The following parameter values of this demo are use the watermeter profile that already initialized to IoT platform.
-        String serviceId = "UploadData";
+        String serviceId = "NBWatch";
         String method = "SEND_NOTICE";
-        ObjectNode paras = JsonUtil.convertObject2ObjectNode("{\"commd\":9,\"notice\":\"123abc\"}");
+        ObjectNode paras = JsonUtil.convertObject2ObjectNode("{\"length\": 13, \"content\": \"SOS Confirmed\"}");
 
         Map<String, Object> paramCommand = new HashMap<>();
         paramCommand.put("serviceId", serviceId);
@@ -50,12 +50,15 @@ public class IotServiceImpl implements IotService {
         paramCreateDeviceCommand.put("callbackUrl", callbackUrl);
         paramCreateDeviceCommand.put("maxRetransmit", maxRetransmit);
 
-        String jsonRequest = JsonMapper.toJson(paramCreateDeviceCommand);
-
         Map<String, String> header = new HashMap<>();
         header.put(Constant.HEADER_APP_KEY, appId);
         header.put(Constant.HEADER_APP_AUTH, "Bearer" + " " + accessToken);
 
+        System.out.println("appId: " + appId);
+        System.out.println("accessToken: " + accessToken);
+        System.out.println("url: " + urlCreateDeviceCommand);
+
+        String jsonRequest = JsonUtil.jsonObj2Sting(paramCreateDeviceCommand);
         HttpResponse responseCreateDeviceCommand = httpsUtil.doPostJson(urlCreateDeviceCommand, header, jsonRequest);
 
         String responseBody = httpsUtil.getHttpResponseBody(responseCreateDeviceCommand);

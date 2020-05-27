@@ -1,13 +1,5 @@
 package com.aw.braceletserver.huawei;
 
-import com.aw.braceletserver.huawei.utils.Constant;
-import com.aw.braceletserver.huawei.utils.HttpsUtil;
-import com.aw.braceletserver.huawei.utils.StreamClosedHttpResponse;
-import com.aw.braceletserver.utils.JsonMapper;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  *  Auth:
  *  This interface is used to authenticate third-party systems before third-party systems access open APIs.

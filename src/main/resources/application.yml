@@ -1,8 +1,8 @@
 server:
-  port: 8080
+  port: 80
 spring:
   application:
-    name: BraceletServer
+    name: braceletserver
   cache:
     type: ehcache
     ehcache:
@@ -13,7 +13,8 @@ spring:
   #数据源配置
   datasource:
     name: test
-    url: jdbc:mysql://localhost:3306/tianwen?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+#    url: jdbc:mysql://localhost:3306/tianwen?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+    url: jdbc:mysql://172.16.221.150:3306/tianwen?useUnicode=true&characterEncoding=utf8
     username: root
     password: Mysql_200
     # 使用druid数据源
