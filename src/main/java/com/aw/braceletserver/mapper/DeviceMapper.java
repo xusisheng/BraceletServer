@@ -13,7 +13,7 @@ public interface DeviceMapper {
 
     int deleteByExample(DeviceExample example);
 
-    int deleteByPrimaryKey(String serialNumber);
+    int deleteByPrimaryKey(Long id);
 
     int insert(Device record);
 
@@ -21,7 +21,7 @@ public interface DeviceMapper {
 
     List<Device> selectByExample(DeviceExample example);
 
-    Device selectByPrimaryKey(String serialNumber);
+    Device selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") Device record, @Param("example") DeviceExample example);
 
@@ -30,8 +30,4 @@ public interface DeviceMapper {
     int updateByPrimaryKeySelective(Device record);
 
     int updateByPrimaryKey(Device record);
-
-    List<Device> selectDeviceByUserId(int userId);
-
-    Integer selectMaxDeviceId();
 }

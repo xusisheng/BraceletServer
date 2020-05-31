@@ -22,10 +22,14 @@ public class IotTokenService {
 //    @PostConstruct  //系统启动时立即执行一次
     // 大概50分钟获取1次token，单位:ms
 //    @Scheduled(fixedRate = 1000*50)
-    private static void getIotToken() throws Exception {
+    private static void getIotToken() {
         logger.info("--启动定时获取IoT平台令牌任务--");
         HttpsUtil httpsUtil = new HttpsUtil();
-        httpsUtil.initSSLConfigForTwoWay();
+        try {
+            httpsUtil.initSSLConfigForTwoWay();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         String appId = Constant.APPID;
         String secret = Constant.SECRET;
@@ -35,22 +39,24 @@ public class IotTokenService {
         param.put("appId", appId);
         param.put("secret", secret);
 
-        StreamClosedHttpResponse responseLogin = httpsUtil.doPostFormUrlEncodedGetStatusLine(urlLogin, param);
-        System.out.println("app auth success,return accessToken:");
-        System.out.println(responseLogin.getStatusLine());
-        System.out.println(responseLogin.getContent());
-        System.out.println();
+        StreamClosedHttpResponse responseLogin = null;
+        try {
+            responseLogin = httpsUtil.doPostFormUrlEncodedGetStatusLine(urlLogin, param);
+            logger.debug(responseLogin.getStatusLine().toString());
+            logger.debug(responseLogin.getContent());
 
-        Map<String, String> data = new HashMap<>();
-        data = JsonMapper.toObject(responseLogin.getContent(), data.getClass());
-        token.setAccessToken(data.get("accessToken"));
-//        token.setExpiresIn(Integer.valueOf(data.get("expiresIn")));
-        token.setRefreshToken(data.get("refreshToken"));
-        token.setScope(data.get("scope"));
-        token.setTokenType(data.get("tokenType"));
+            Map<String, String> data = new HashMap<>();
+            data = JsonMapper.toObject(responseLogin.getContent(), data.getClass());
+            token.setAccessToken(data.get("accessToken"));
+            token.setRefreshToken(data.get("refreshToken"));
+            token.setScope(data.get("scope"));
+            token.setTokenType(data.get("tokenType"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public static IotAccessToken getToken() throws Exception {
+    public static IotAccessToken getToken() {
         synchronized (token) {
             if (token.getAccessToken() == null) {
                 IotTokenService.getIotToken();

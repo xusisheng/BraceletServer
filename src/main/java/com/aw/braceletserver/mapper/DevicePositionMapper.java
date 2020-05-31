@@ -13,7 +13,7 @@ public interface DevicePositionMapper {
 
     int deleteByExample(DevicePositionExample example);
 
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     int insert(DevicePosition record);
 
@@ -21,7 +21,7 @@ public interface DevicePositionMapper {
 
     List<DevicePosition> selectByExample(DevicePositionExample example);
 
-    DevicePosition selectByPrimaryKey(Integer id);
+    DevicePosition selectByPrimaryKey(Long id);
 
     int updateByExampleSelective(@Param("record") DevicePosition record, @Param("example") DevicePositionExample example);
 
@@ -31,5 +31,5 @@ public interface DevicePositionMapper {
 
     int updateByPrimaryKey(DevicePosition record);
 
-    Integer selectMaxDevicePositionId();
+    List<DevicePosition> getLastedNDevicePositionByDeviceId(@Param("deviceId") Long deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("limit") Integer limit);
 }

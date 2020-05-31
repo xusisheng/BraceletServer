@@ -2,18 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.aw.braceletserver.mapper.DevicePositionMapper">
   <resultMap id="BaseResultMap" type="com.aw.braceletserver.model.DevicePosition">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="device_id" jdbcType="INTEGER" property="deviceId" />
-    <result column="latitude" jdbcType="DECIMAL" property="latitude" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="device_id" jdbcType="BIGINT" property="deviceId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="uptime" jdbcType="TIMESTAMP" property="uptime" />
+    <result column="message_type" jdbcType="VARCHAR" property="messageType" />
+    <result column="locate_mode" jdbcType="INTEGER" property="locateMode" />
     <result column="longitude" jdbcType="DECIMAL" property="longitude" />
-    <result column="o_latitude" jdbcType="DECIMAL" property="oLatitude" />
-    <result column="o_longitude" jdbcType="DECIMAL" property="oLongitude" />
-    <result column="device_utc_time" jdbcType="TIMESTAMP" property="deviceUtcTime" />
-    <result column="position_type" jdbcType="INTEGER" property="positionType" />
-    <result column="altitude" jdbcType="REAL" property="altitude" />
-    <result column="online_status" jdbcType="INTEGER" property="onlineStatus" />
+    <result column="latitude" jdbcType="DECIMAL" property="latitude" />
+    <result column="altitude" jdbcType="DECIMAL" property="altitude" />
     <result column="atmosphere" jdbcType="DECIMAL" property="atmosphere" />
     <result column="battery" jdbcType="INTEGER" property="battery" />
+    <result column="heart_beat" jdbcType="INTEGER" property="heartBeat" />
+    <result column="disastolic" jdbcType="DOUBLE" property="disastolic" />
+    <result column="shrink" jdbcType="DOUBLE" property="shrink" />
+    <result column="blood_pressure" jdbcType="DOUBLE" property="bloodPressure" />
+    <result column="blood_sugar" jdbcType="DOUBLE" property="bloodSugar" />
+    <result column="temperature" jdbcType="DOUBLE" property="temperature" />
+    <result column="steps" jdbcType="INTEGER" property="steps" />
+    <result column="deep_sleep" jdbcType="INTEGER" property="deepSleep" />
+    <result column="light_sleep" jdbcType="INTEGER" property="lightSleep" />
+    <result column="roll" jdbcType="INTEGER" property="roll" />
+    <result column="wake" jdbcType="INTEGER" property="wake" />
+    <result column="quality" jdbcType="INTEGER" property="quality" />
+    <result column="online_status" jdbcType="BIT" property="onlineStatus" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -74,8 +87,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, device_id, latitude, longitude, o_latitude, o_longitude, device_utc_time, position_type, 
-    altitude, online_status, atmosphere, battery
+    id, device_id, user_id, uptime, message_type, locate_mode, longitude, latitude, altitude, 
+    atmosphere, battery, heart_beat, disastolic, shrink, blood_pressure, blood_sugar, 
+    temperature, steps, deep_sleep, light_sleep, roll, wake, quality, online_status, 
+    create_time
   </sql>
   <select id="selectByExample" parameterType="com.aw.braceletserver.model.DevicePositionExample" resultMap="BaseResultMap">
     select
@@ -91,15 +106,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from device_position
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from device_position
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.aw.braceletserver.model.DevicePositionExample">
     delete from device_position
@@ -108,16 +123,24 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.aw.braceletserver.model.DevicePosition">
-    insert into device_position (id, device_id, latitude, 
-      longitude, o_latitude, o_longitude, 
-      device_utc_time, position_type, altitude, 
-      online_status, atmosphere, battery
-      )
-    values (#{id,jdbcType=INTEGER}, #{deviceId,jdbcType=INTEGER}, #{latitude,jdbcType=DECIMAL}, 
-      #{longitude,jdbcType=DECIMAL}, #{oLatitude,jdbcType=DECIMAL}, #{oLongitude,jdbcType=DECIMAL}, 
-      #{deviceUtcTime,jdbcType=TIMESTAMP}, #{positionType,jdbcType=INTEGER}, #{altitude,jdbcType=REAL}, 
-      #{onlineStatus,jdbcType=INTEGER}, #{atmosphere,jdbcType=DECIMAL}, #{battery,jdbcType=INTEGER}
-      )
+    insert into device_position (id, device_id, user_id, 
+      uptime, message_type, locate_mode, 
+      longitude, latitude, altitude, 
+      atmosphere, battery, heart_beat, 
+      disastolic, shrink, blood_pressure, 
+      blood_sugar, temperature, steps, 
+      deep_sleep, light_sleep, roll, 
+      wake, quality, online_status, 
+      create_time)
+    values (#{id,jdbcType=BIGINT}, #{deviceId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{uptime,jdbcType=TIMESTAMP}, #{messageType,jdbcType=VARCHAR}, #{locateMode,jdbcType=INTEGER}, 
+      #{longitude,jdbcType=DECIMAL}, #{latitude,jdbcType=DECIMAL}, #{altitude,jdbcType=DECIMAL}, 
+      #{atmosphere,jdbcType=DECIMAL}, #{battery,jdbcType=INTEGER}, #{heartBeat,jdbcType=INTEGER}, 
+      #{disastolic,jdbcType=DOUBLE}, #{shrink,jdbcType=DOUBLE}, #{bloodPressure,jdbcType=DOUBLE}, 
+      #{bloodSugar,jdbcType=DOUBLE}, #{temperature,jdbcType=DOUBLE}, #{steps,jdbcType=INTEGER}, 
+      #{deepSleep,jdbcType=INTEGER}, #{lightSleep,jdbcType=INTEGER}, #{roll,jdbcType=INTEGER}, 
+      #{wake,jdbcType=INTEGER}, #{quality,jdbcType=INTEGER}, #{onlineStatus,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.aw.braceletserver.model.DevicePosition">
     insert into device_position
@@ -128,29 +151,26 @@
       <if test="deviceId != null">
         device_id,
       </if>
-      <if test="latitude != null">
-        latitude,
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="uptime != null">
+        uptime,
+      </if>
+      <if test="messageType != null">
+        message_type,
+      </if>
+      <if test="locateMode != null">
+        locate_mode,
       </if>
       <if test="longitude != null">
         longitude,
       </if>
-      <if test="oLatitude != null">
-        o_latitude,
-      </if>
-      <if test="oLongitude != null">
-        o_longitude,
-      </if>
-      <if test="deviceUtcTime != null">
-        device_utc_time,
-      </if>
-      <if test="positionType != null">
-        position_type,
+      <if test="latitude != null">
+        latitude,
       </if>
       <if test="altitude != null">
         altitude,
-      </if>
-      <if test="onlineStatus != null">
-        online_status,
       </if>
       <if test="atmosphere != null">
         atmosphere,
@@ -158,43 +178,124 @@
       <if test="battery != null">
         battery,
       </if>
+      <if test="heartBeat != null">
+        heart_beat,
+      </if>
+      <if test="disastolic != null">
+        disastolic,
+      </if>
+      <if test="shrink != null">
+        shrink,
+      </if>
+      <if test="bloodPressure != null">
+        blood_pressure,
+      </if>
+      <if test="bloodSugar != null">
+        blood_sugar,
+      </if>
+      <if test="temperature != null">
+        temperature,
+      </if>
+      <if test="steps != null">
+        steps,
+      </if>
+      <if test="deepSleep != null">
+        deep_sleep,
+      </if>
+      <if test="lightSleep != null">
+        light_sleep,
+      </if>
+      <if test="roll != null">
+        roll,
+      </if>
+      <if test="wake != null">
+        wake,
+      </if>
+      <if test="quality != null">
+        quality,
+      </if>
+      <if test="onlineStatus != null">
+        online_status,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
-        #{id,jdbcType=INTEGER},
+        #{id,jdbcType=BIGINT},
       </if>
       <if test="deviceId != null">
-        #{deviceId,jdbcType=INTEGER},
+        #{deviceId,jdbcType=BIGINT},
       </if>
-      <if test="latitude != null">
-        #{latitude,jdbcType=DECIMAL},
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="uptime != null">
+        #{uptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="messageType != null">
+        #{messageType,jdbcType=VARCHAR},
+      </if>
+      <if test="locateMode != null">
+        #{locateMode,jdbcType=INTEGER},
       </if>
       <if test="longitude != null">
         #{longitude,jdbcType=DECIMAL},
       </if>
-      <if test="oLatitude != null">
-        #{oLatitude,jdbcType=DECIMAL},
-      </if>
-      <if test="oLongitude != null">
-        #{oLongitude,jdbcType=DECIMAL},
-      </if>
-      <if test="deviceUtcTime != null">
-        #{deviceUtcTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="positionType != null">
-        #{positionType,jdbcType=INTEGER},
+      <if test="latitude != null">
+        #{latitude,jdbcType=DECIMAL},
       </if>
       <if test="altitude != null">
-        #{altitude,jdbcType=REAL},
-      </if>
-      <if test="onlineStatus != null">
-        #{onlineStatus,jdbcType=INTEGER},
+        #{altitude,jdbcType=DECIMAL},
       </if>
       <if test="atmosphere != null">
         #{atmosphere,jdbcType=DECIMAL},
       </if>
       <if test="battery != null">
         #{battery,jdbcType=INTEGER},
+      </if>
+      <if test="heartBeat != null">
+        #{heartBeat,jdbcType=INTEGER},
+      </if>
+      <if test="disastolic != null">
+        #{disastolic,jdbcType=DOUBLE},
+      </if>
+      <if test="shrink != null">
+        #{shrink,jdbcType=DOUBLE},
+      </if>
+      <if test="bloodPressure != null">
+        #{bloodPressure,jdbcType=DOUBLE},
+      </if>
+      <if test="bloodSugar != null">
+        #{bloodSugar,jdbcType=DOUBLE},
+      </if>
+      <if test="temperature != null">
+        #{temperature,jdbcType=DOUBLE},
+      </if>
+      <if test="steps != null">
+        #{steps,jdbcType=INTEGER},
+      </if>
+      <if test="deepSleep != null">
+        #{deepSleep,jdbcType=INTEGER},
+      </if>
+      <if test="lightSleep != null">
+        #{lightSleep,jdbcType=INTEGER},
+      </if>
+      <if test="roll != null">
+        #{roll,jdbcType=INTEGER},
+      </if>
+      <if test="wake != null">
+        #{wake,jdbcType=INTEGER},
+      </if>
+      <if test="quality != null">
+        #{quality,jdbcType=INTEGER},
+      </if>
+      <if test="onlineStatus != null">
+        #{onlineStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -208,40 +309,79 @@
     update device_position
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.deviceId != null">
-        device_id = #{record.deviceId,jdbcType=INTEGER},
+        device_id = #{record.deviceId,jdbcType=BIGINT},
       </if>
-      <if test="record.latitude != null">
-        latitude = #{record.latitude,jdbcType=DECIMAL},
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.uptime != null">
+        uptime = #{record.uptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.messageType != null">
+        message_type = #{record.messageType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.locateMode != null">
+        locate_mode = #{record.locateMode,jdbcType=INTEGER},
       </if>
       <if test="record.longitude != null">
         longitude = #{record.longitude,jdbcType=DECIMAL},
       </if>
-      <if test="record.oLatitude != null">
-        o_latitude = #{record.oLatitude,jdbcType=DECIMAL},
-      </if>
-      <if test="record.oLongitude != null">
-        o_longitude = #{record.oLongitude,jdbcType=DECIMAL},
-      </if>
-      <if test="record.deviceUtcTime != null">
-        device_utc_time = #{record.deviceUtcTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.positionType != null">
-        position_type = #{record.positionType,jdbcType=INTEGER},
+      <if test="record.latitude != null">
+        latitude = #{record.latitude,jdbcType=DECIMAL},
       </if>
       <if test="record.altitude != null">
-        altitude = #{record.altitude,jdbcType=REAL},
-      </if>
-      <if test="record.onlineStatus != null">
-        online_status = #{record.onlineStatus,jdbcType=INTEGER},
+        altitude = #{record.altitude,jdbcType=DECIMAL},
       </if>
       <if test="record.atmosphere != null">
         atmosphere = #{record.atmosphere,jdbcType=DECIMAL},
       </if>
       <if test="record.battery != null">
         battery = #{record.battery,jdbcType=INTEGER},
+      </if>
+      <if test="record.heartBeat != null">
+        heart_beat = #{record.heartBeat,jdbcType=INTEGER},
+      </if>
+      <if test="record.disastolic != null">
+        disastolic = #{record.disastolic,jdbcType=DOUBLE},
+      </if>
+      <if test="record.shrink != null">
+        shrink = #{record.shrink,jdbcType=DOUBLE},
+      </if>
+      <if test="record.bloodPressure != null">
+        blood_pressure = #{record.bloodPressure,jdbcType=DOUBLE},
+      </if>
+      <if test="record.bloodSugar != null">
+        blood_sugar = #{record.bloodSugar,jdbcType=DOUBLE},
+      </if>
+      <if test="record.temperature != null">
+        temperature = #{record.temperature,jdbcType=DOUBLE},
+      </if>
+      <if test="record.steps != null">
+        steps = #{record.steps,jdbcType=INTEGER},
+      </if>
+      <if test="record.deepSleep != null">
+        deep_sleep = #{record.deepSleep,jdbcType=INTEGER},
+      </if>
+      <if test="record.lightSleep != null">
+        light_sleep = #{record.lightSleep,jdbcType=INTEGER},
+      </if>
+      <if test="record.roll != null">
+        roll = #{record.roll,jdbcType=INTEGER},
+      </if>
+      <if test="record.wake != null">
+        wake = #{record.wake,jdbcType=INTEGER},
+      </if>
+      <if test="record.quality != null">
+        quality = #{record.quality,jdbcType=INTEGER},
+      </if>
+      <if test="record.onlineStatus != null">
+        online_status = #{record.onlineStatus,jdbcType=BIT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -250,18 +390,31 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update device_position
-    set id = #{record.id,jdbcType=INTEGER},
-      device_id = #{record.deviceId,jdbcType=INTEGER},
-      latitude = #{record.latitude,jdbcType=DECIMAL},
+    set id = #{record.id,jdbcType=BIGINT},
+      device_id = #{record.deviceId,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      uptime = #{record.uptime,jdbcType=TIMESTAMP},
+      message_type = #{record.messageType,jdbcType=VARCHAR},
+      locate_mode = #{record.locateMode,jdbcType=INTEGER},
       longitude = #{record.longitude,jdbcType=DECIMAL},
-      o_latitude = #{record.oLatitude,jdbcType=DECIMAL},
-      o_longitude = #{record.oLongitude,jdbcType=DECIMAL},
-      device_utc_time = #{record.deviceUtcTime,jdbcType=TIMESTAMP},
-      position_type = #{record.positionType,jdbcType=INTEGER},
-      altitude = #{record.altitude,jdbcType=REAL},
-      online_status = #{record.onlineStatus,jdbcType=INTEGER},
+      latitude = #{record.latitude,jdbcType=DECIMAL},
+      altitude = #{record.altitude,jdbcType=DECIMAL},
       atmosphere = #{record.atmosphere,jdbcType=DECIMAL},
-      battery = #{record.battery,jdbcType=INTEGER}
+      battery = #{record.battery,jdbcType=INTEGER},
+      heart_beat = #{record.heartBeat,jdbcType=INTEGER},
+      disastolic = #{record.disastolic,jdbcType=DOUBLE},
+      shrink = #{record.shrink,jdbcType=DOUBLE},
+      blood_pressure = #{record.bloodPressure,jdbcType=DOUBLE},
+      blood_sugar = #{record.bloodSugar,jdbcType=DOUBLE},
+      temperature = #{record.temperature,jdbcType=DOUBLE},
+      steps = #{record.steps,jdbcType=INTEGER},
+      deep_sleep = #{record.deepSleep,jdbcType=INTEGER},
+      light_sleep = #{record.lightSleep,jdbcType=INTEGER},
+      roll = #{record.roll,jdbcType=INTEGER},
+      wake = #{record.wake,jdbcType=INTEGER},
+      quality = #{record.quality,jdbcType=INTEGER},
+      online_status = #{record.onlineStatus,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -270,31 +423,28 @@
     update device_position
     <set>
       <if test="deviceId != null">
-        device_id = #{deviceId,jdbcType=INTEGER},
+        device_id = #{deviceId,jdbcType=BIGINT},
       </if>
-      <if test="latitude != null">
-        latitude = #{latitude,jdbcType=DECIMAL},
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="uptime != null">
+        uptime = #{uptime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="messageType != null">
+        message_type = #{messageType,jdbcType=VARCHAR},
+      </if>
+      <if test="locateMode != null">
+        locate_mode = #{locateMode,jdbcType=INTEGER},
       </if>
       <if test="longitude != null">
         longitude = #{longitude,jdbcType=DECIMAL},
       </if>
-      <if test="oLatitude != null">
-        o_latitude = #{oLatitude,jdbcType=DECIMAL},
-      </if>
-      <if test="oLongitude != null">
-        o_longitude = #{oLongitude,jdbcType=DECIMAL},
-      </if>
-      <if test="deviceUtcTime != null">
-        device_utc_time = #{deviceUtcTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="positionType != null">
-        position_type = #{positionType,jdbcType=INTEGER},
+      <if test="latitude != null">
+        latitude = #{latitude,jdbcType=DECIMAL},
       </if>
       <if test="altitude != null">
-        altitude = #{altitude,jdbcType=REAL},
-      </if>
-      <if test="onlineStatus != null">
-        online_status = #{onlineStatus,jdbcType=INTEGER},
+        altitude = #{altitude,jdbcType=DECIMAL},
       </if>
       <if test="atmosphere != null">
         atmosphere = #{atmosphere,jdbcType=DECIMAL},
@@ -302,26 +452,91 @@
       <if test="battery != null">
         battery = #{battery,jdbcType=INTEGER},
       </if>
+      <if test="heartBeat != null">
+        heart_beat = #{heartBeat,jdbcType=INTEGER},
+      </if>
+      <if test="disastolic != null">
+        disastolic = #{disastolic,jdbcType=DOUBLE},
+      </if>
+      <if test="shrink != null">
+        shrink = #{shrink,jdbcType=DOUBLE},
+      </if>
+      <if test="bloodPressure != null">
+        blood_pressure = #{bloodPressure,jdbcType=DOUBLE},
+      </if>
+      <if test="bloodSugar != null">
+        blood_sugar = #{bloodSugar,jdbcType=DOUBLE},
+      </if>
+      <if test="temperature != null">
+        temperature = #{temperature,jdbcType=DOUBLE},
+      </if>
+      <if test="steps != null">
+        steps = #{steps,jdbcType=INTEGER},
+      </if>
+      <if test="deepSleep != null">
+        deep_sleep = #{deepSleep,jdbcType=INTEGER},
+      </if>
+      <if test="lightSleep != null">
+        light_sleep = #{lightSleep,jdbcType=INTEGER},
+      </if>
+      <if test="roll != null">
+        roll = #{roll,jdbcType=INTEGER},
+      </if>
+      <if test="wake != null">
+        wake = #{wake,jdbcType=INTEGER},
+      </if>
+      <if test="quality != null">
+        quality = #{quality,jdbcType=INTEGER},
+      </if>
+      <if test="onlineStatus != null">
+        online_status = #{onlineStatus,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.aw.braceletserver.model.DevicePosition">
     update device_position
-    set device_id = #{deviceId,jdbcType=INTEGER},
-      latitude = #{latitude,jdbcType=DECIMAL},
+    set device_id = #{deviceId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      uptime = #{uptime,jdbcType=TIMESTAMP},
+      message_type = #{messageType,jdbcType=VARCHAR},
+      locate_mode = #{locateMode,jdbcType=INTEGER},
       longitude = #{longitude,jdbcType=DECIMAL},
-      o_latitude = #{oLatitude,jdbcType=DECIMAL},
-      o_longitude = #{oLongitude,jdbcType=DECIMAL},
-      device_utc_time = #{deviceUtcTime,jdbcType=TIMESTAMP},
-      position_type = #{positionType,jdbcType=INTEGER},
-      altitude = #{altitude,jdbcType=REAL},
-      online_status = #{onlineStatus,jdbcType=INTEGER},
+      latitude = #{latitude,jdbcType=DECIMAL},
+      altitude = #{altitude,jdbcType=DECIMAL},
       atmosphere = #{atmosphere,jdbcType=DECIMAL},
-      battery = #{battery,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
+      battery = #{battery,jdbcType=INTEGER},
+      heart_beat = #{heartBeat,jdbcType=INTEGER},
+      disastolic = #{disastolic,jdbcType=DOUBLE},
+      shrink = #{shrink,jdbcType=DOUBLE},
+      blood_pressure = #{bloodPressure,jdbcType=DOUBLE},
+      blood_sugar = #{bloodSugar,jdbcType=DOUBLE},
+      temperature = #{temperature,jdbcType=DOUBLE},
+      steps = #{steps,jdbcType=INTEGER},
+      deep_sleep = #{deepSleep,jdbcType=INTEGER},
+      light_sleep = #{lightSleep,jdbcType=INTEGER},
+      roll = #{roll,jdbcType=INTEGER},
+      wake = #{wake,jdbcType=INTEGER},
+      quality = #{quality,jdbcType=INTEGER},
+      online_status = #{onlineStatus,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectMaxDevicePositionId" resultType="java.lang.Integer">
-	select max(ID)
-	from device_position for update
+  <select id = 'getLastedNDevicePositionByDeviceId' resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM device_position
+    WHERE device_id = #{deviceId, jdbcType=BIGINT}
+    <if test="startTime != null and startTime != '' ">
+        AND uptime <![CDATA[ >= ]]> #{startTime}
+    </if>
+    <if test="endTime != null and endTime != '' ">
+        AND uptime <![CDATA[ <= ]]> #{endTime}
+    </if>
+    ORDER BY uptime DESC
+    LIMIT #{limit, jdbcType=INTEGER}
   </select>
 </mapper>

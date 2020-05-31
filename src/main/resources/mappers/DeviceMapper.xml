@@ -2,14 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.aw.braceletserver.mapper.DeviceMapper">
   <resultMap id="BaseResultMap" type="com.aw.braceletserver.model.Device">
-    <id column="SERIAL_NUMBER" jdbcType="VARCHAR" property="serialNumber" />
-    <result column="DEVICE_ID" jdbcType="INTEGER" property="deviceId" />
-    <result column="DEVICE_NAME" jdbcType="VARCHAR" property="deviceName" />
-    <result column="NICK_NAME" jdbcType="VARCHAR" property="nickName" />
-    <result column="DEVICE_TYPE" jdbcType="INTEGER" property="deviceType" />
-    <result column="STATUS" jdbcType="INTEGER" property="status" />
-    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="idcode" jdbcType="VARCHAR" property="idcode" />
+    <result column="iot_deviceid" jdbcType="VARCHAR" property="iotDeviceid" />
+    <result column="sn" jdbcType="VARCHAR" property="sn" />
+    <result column="imei" jdbcType="VARCHAR" property="imei" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="sw_version" jdbcType="VARCHAR" property="swVersion" />
+    <result column="fw_version" jdbcType="VARCHAR" property="fwVersion" />
+    <result column="hw_version" jdbcType="VARCHAR" property="hwVersion" />
+    <result column="sig_version" jdbcType="VARCHAR" property="sigVersion" />
+    <result column="mac" jdbcType="VARCHAR" property="mac" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="manufacturer_id" jdbcType="VARCHAR" property="manufacturerId" />
+    <result column="manufacturer_name" jdbcType="VARCHAR" property="manufacturerName" />
+    <result column="model" jdbcType="VARCHAR" property="model" />
+    <result column="protocol_type" jdbcType="VARCHAR" property="protocolType" />
+    <result column="status_detail" jdbcType="VARCHAR" property="statusDetail" />
+    <result column="mute" jdbcType="VARCHAR" property="mute" />
+    <result column="supported_security" jdbcType="VARCHAR" property="supportedSecurity" />
+    <result column="is_security" jdbcType="VARCHAR" property="isSecurity" />
+    <result column="signal_strength" jdbcType="VARCHAR" property="signalStrength" />
+    <result column="battery_level" jdbcType="VARCHAR" property="batteryLevel" />
+    <result column="is_hd" jdbcType="VARCHAR" property="isHd" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -70,8 +91,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    SERIAL_NUMBER, DEVICE_ID, DEVICE_NAME, NICK_NAME, DEVICE_TYPE, STATUS, CREATE_TIME, 
-    REMARK
+    id, idcode, iot_deviceid, sn, imei, name, nickname, type, status, create_time, sw_version, 
+    fw_version, hw_version, sig_version, mac, location, description, manufacturer_id, 
+    manufacturer_name, model, protocol_type, status_detail, mute, supported_security, 
+    is_security, signal_strength, battery_level, is_hd, remark
   </sql>
   <select id="selectByExample" parameterType="com.aw.braceletserver.model.DeviceExample" resultMap="BaseResultMap">
     select
@@ -87,15 +110,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from device
-    where SERIAL_NUMBER = #{serialNumber,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from device
-    where SERIAL_NUMBER = #{serialNumber,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.aw.braceletserver.model.DeviceExample">
     delete from device
@@ -104,62 +127,202 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.aw.braceletserver.model.Device">
-    insert into device (SERIAL_NUMBER, DEVICE_ID, DEVICE_NAME, 
-      NICK_NAME, DEVICE_TYPE, STATUS, 
-      CREATE_TIME, REMARK)
-    values (#{serialNumber,jdbcType=VARCHAR}, #{deviceId,jdbcType=INTEGER}, #{deviceName,jdbcType=VARCHAR}, 
-      #{nickName,jdbcType=VARCHAR}, #{deviceType,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+    insert into device (id, idcode, iot_deviceid, 
+      sn, imei, name, nickname, 
+      type, status, create_time, 
+      sw_version, fw_version, hw_version, 
+      sig_version, mac, location, 
+      description, manufacturer_id, manufacturer_name, 
+      model, protocol_type, status_detail, 
+      mute, supported_security, is_security, 
+      signal_strength, battery_level, is_hd, 
+      remark)
+    values (#{id,jdbcType=BIGINT}, #{idcode,jdbcType=VARCHAR}, #{iotDeviceid,jdbcType=VARCHAR}, 
+      #{sn,jdbcType=VARCHAR}, #{imei,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{swVersion,jdbcType=VARCHAR}, #{fwVersion,jdbcType=VARCHAR}, #{hwVersion,jdbcType=VARCHAR}, 
+      #{sigVersion,jdbcType=VARCHAR}, #{mac,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{manufacturerId,jdbcType=VARCHAR}, #{manufacturerName,jdbcType=VARCHAR}, 
+      #{model,jdbcType=VARCHAR}, #{protocolType,jdbcType=VARCHAR}, #{statusDetail,jdbcType=VARCHAR}, 
+      #{mute,jdbcType=VARCHAR}, #{supportedSecurity,jdbcType=VARCHAR}, #{isSecurity,jdbcType=VARCHAR}, 
+      #{signalStrength,jdbcType=VARCHAR}, #{batteryLevel,jdbcType=VARCHAR}, #{isHd,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.aw.braceletserver.model.Device">
     insert into device
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="serialNumber != null">
-        SERIAL_NUMBER,
+      <if test="id != null">
+        id,
       </if>
-      <if test="deviceId != null">
-        DEVICE_ID,
+      <if test="idcode != null">
+        idcode,
       </if>
-      <if test="deviceName != null">
-        DEVICE_NAME,
+      <if test="iotDeviceid != null">
+        iot_deviceid,
       </if>
-      <if test="nickName != null">
-        NICK_NAME,
+      <if test="sn != null">
+        sn,
       </if>
-      <if test="deviceType != null">
-        DEVICE_TYPE,
+      <if test="imei != null">
+        imei,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="nickname != null">
+        nickname,
+      </if>
+      <if test="type != null">
+        type,
       </if>
       <if test="status != null">
-        STATUS,
+        status,
       </if>
       <if test="createTime != null">
-        CREATE_TIME,
+        create_time,
+      </if>
+      <if test="swVersion != null">
+        sw_version,
+      </if>
+      <if test="fwVersion != null">
+        fw_version,
+      </if>
+      <if test="hwVersion != null">
+        hw_version,
+      </if>
+      <if test="sigVersion != null">
+        sig_version,
+      </if>
+      <if test="mac != null">
+        mac,
+      </if>
+      <if test="location != null">
+        location,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="manufacturerId != null">
+        manufacturer_id,
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name,
+      </if>
+      <if test="model != null">
+        model,
+      </if>
+      <if test="protocolType != null">
+        protocol_type,
+      </if>
+      <if test="statusDetail != null">
+        status_detail,
+      </if>
+      <if test="mute != null">
+        mute,
+      </if>
+      <if test="supportedSecurity != null">
+        supported_security,
+      </if>
+      <if test="isSecurity != null">
+        is_security,
+      </if>
+      <if test="signalStrength != null">
+        signal_strength,
+      </if>
+      <if test="batteryLevel != null">
+        battery_level,
+      </if>
+      <if test="isHd != null">
+        is_hd,
       </if>
       <if test="remark != null">
-        REMARK,
+        remark,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="serialNumber != null">
-        #{serialNumber,jdbcType=VARCHAR},
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
       </if>
-      <if test="deviceId != null">
-        #{deviceId,jdbcType=INTEGER},
+      <if test="idcode != null">
+        #{idcode,jdbcType=VARCHAR},
       </if>
-      <if test="deviceName != null">
-        #{deviceName,jdbcType=VARCHAR},
+      <if test="iotDeviceid != null">
+        #{iotDeviceid,jdbcType=VARCHAR},
       </if>
-      <if test="nickName != null">
-        #{nickName,jdbcType=VARCHAR},
+      <if test="sn != null">
+        #{sn,jdbcType=VARCHAR},
       </if>
-      <if test="deviceType != null">
-        #{deviceType,jdbcType=INTEGER},
+      <if test="imei != null">
+        #{imei,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="swVersion != null">
+        #{swVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="fwVersion != null">
+        #{fwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="hwVersion != null">
+        #{hwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="sigVersion != null">
+        #{sigVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="mac != null">
+        #{mac,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerId != null">
+        #{manufacturerId,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerName != null">
+        #{manufacturerName,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null">
+        #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="protocolType != null">
+        #{protocolType,jdbcType=VARCHAR},
+      </if>
+      <if test="statusDetail != null">
+        #{statusDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="mute != null">
+        #{mute,jdbcType=VARCHAR},
+      </if>
+      <if test="supportedSecurity != null">
+        #{supportedSecurity,jdbcType=VARCHAR},
+      </if>
+      <if test="isSecurity != null">
+        #{isSecurity,jdbcType=VARCHAR},
+      </if>
+      <if test="signalStrength != null">
+        #{signalStrength,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryLevel != null">
+        #{batteryLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="isHd != null">
+        #{isHd,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
@@ -175,29 +338,92 @@
   <update id="updateByExampleSelective" parameterType="map">
     update device
     <set>
-      <if test="record.serialNumber != null">
-        SERIAL_NUMBER = #{record.serialNumber,jdbcType=VARCHAR},
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.deviceId != null">
-        DEVICE_ID = #{record.deviceId,jdbcType=INTEGER},
+      <if test="record.idcode != null">
+        idcode = #{record.idcode,jdbcType=VARCHAR},
       </if>
-      <if test="record.deviceName != null">
-        DEVICE_NAME = #{record.deviceName,jdbcType=VARCHAR},
+      <if test="record.iotDeviceid != null">
+        iot_deviceid = #{record.iotDeviceid,jdbcType=VARCHAR},
       </if>
-      <if test="record.nickName != null">
-        NICK_NAME = #{record.nickName,jdbcType=VARCHAR},
+      <if test="record.sn != null">
+        sn = #{record.sn,jdbcType=VARCHAR},
       </if>
-      <if test="record.deviceType != null">
-        DEVICE_TYPE = #{record.deviceType,jdbcType=INTEGER},
+      <if test="record.imei != null">
+        imei = #{record.imei,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nickname != null">
+        nickname = #{record.nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
-        STATUS = #{record.status,jdbcType=INTEGER},
+        status = #{record.status,jdbcType=INTEGER},
       </if>
       <if test="record.createTime != null">
-        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.swVersion != null">
+        sw_version = #{record.swVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fwVersion != null">
+        fw_version = #{record.fwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hwVersion != null">
+        hw_version = #{record.hwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sigVersion != null">
+        sig_version = #{record.sigVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mac != null">
+        mac = #{record.mac,jdbcType=VARCHAR},
+      </if>
+      <if test="record.location != null">
+        location = #{record.location,jdbcType=VARCHAR},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.manufacturerId != null">
+        manufacturer_id = #{record.manufacturerId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.manufacturerName != null">
+        manufacturer_name = #{record.manufacturerName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.model != null">
+        model = #{record.model,jdbcType=VARCHAR},
+      </if>
+      <if test="record.protocolType != null">
+        protocol_type = #{record.protocolType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.statusDetail != null">
+        status_detail = #{record.statusDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mute != null">
+        mute = #{record.mute,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supportedSecurity != null">
+        supported_security = #{record.supportedSecurity,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isSecurity != null">
+        is_security = #{record.isSecurity,jdbcType=VARCHAR},
+      </if>
+      <if test="record.signalStrength != null">
+        signal_strength = #{record.signalStrength,jdbcType=VARCHAR},
+      </if>
+      <if test="record.batteryLevel != null">
+        battery_level = #{record.batteryLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isHd != null">
+        is_hd = #{record.isHd,jdbcType=VARCHAR},
       </if>
       <if test="record.remark != null">
-        REMARK = #{record.remark,jdbcType=VARCHAR},
+        remark = #{record.remark,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -206,14 +432,35 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update device
-    set SERIAL_NUMBER = #{record.serialNumber,jdbcType=VARCHAR},
-      DEVICE_ID = #{record.deviceId,jdbcType=INTEGER},
-      DEVICE_NAME = #{record.deviceName,jdbcType=VARCHAR},
-      NICK_NAME = #{record.nickName,jdbcType=VARCHAR},
-      DEVICE_TYPE = #{record.deviceType,jdbcType=INTEGER},
-      STATUS = #{record.status,jdbcType=INTEGER},
-      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
-      REMARK = #{record.remark,jdbcType=VARCHAR}
+    set id = #{record.id,jdbcType=BIGINT},
+      idcode = #{record.idcode,jdbcType=VARCHAR},
+      iot_deviceid = #{record.iotDeviceid,jdbcType=VARCHAR},
+      sn = #{record.sn,jdbcType=VARCHAR},
+      imei = #{record.imei,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      nickname = #{record.nickname,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      sw_version = #{record.swVersion,jdbcType=VARCHAR},
+      fw_version = #{record.fwVersion,jdbcType=VARCHAR},
+      hw_version = #{record.hwVersion,jdbcType=VARCHAR},
+      sig_version = #{record.sigVersion,jdbcType=VARCHAR},
+      mac = #{record.mac,jdbcType=VARCHAR},
+      location = #{record.location,jdbcType=VARCHAR},
+      description = #{record.description,jdbcType=VARCHAR},
+      manufacturer_id = #{record.manufacturerId,jdbcType=VARCHAR},
+      manufacturer_name = #{record.manufacturerName,jdbcType=VARCHAR},
+      model = #{record.model,jdbcType=VARCHAR},
+      protocol_type = #{record.protocolType,jdbcType=VARCHAR},
+      status_detail = #{record.statusDetail,jdbcType=VARCHAR},
+      mute = #{record.mute,jdbcType=VARCHAR},
+      supported_security = #{record.supportedSecurity,jdbcType=VARCHAR},
+      is_security = #{record.isSecurity,jdbcType=VARCHAR},
+      signal_strength = #{record.signalStrength,jdbcType=VARCHAR},
+      battery_level = #{record.batteryLevel,jdbcType=VARCHAR},
+      is_hd = #{record.isHd,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -221,56 +468,123 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.aw.braceletserver.model.Device">
     update device
     <set>
-      <if test="deviceId != null">
-        DEVICE_ID = #{deviceId,jdbcType=INTEGER},
+      <if test="idcode != null">
+        idcode = #{idcode,jdbcType=VARCHAR},
       </if>
-      <if test="deviceName != null">
-        DEVICE_NAME = #{deviceName,jdbcType=VARCHAR},
+      <if test="iotDeviceid != null">
+        iot_deviceid = #{iotDeviceid,jdbcType=VARCHAR},
       </if>
-      <if test="nickName != null">
-        NICK_NAME = #{nickName,jdbcType=VARCHAR},
+      <if test="sn != null">
+        sn = #{sn,jdbcType=VARCHAR},
       </if>
-      <if test="deviceType != null">
-        DEVICE_TYPE = #{deviceType,jdbcType=INTEGER},
+      <if test="imei != null">
+        imei = #{imei,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        STATUS = #{status,jdbcType=INTEGER},
+        status = #{status,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
-        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="swVersion != null">
+        sw_version = #{swVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="fwVersion != null">
+        fw_version = #{fwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="hwVersion != null">
+        hw_version = #{hwVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="sigVersion != null">
+        sig_version = #{sigVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="mac != null">
+        mac = #{mac,jdbcType=VARCHAR},
+      </if>
+      <if test="location != null">
+        location = #{location,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerId != null">
+        manufacturer_id = #{manufacturerId,jdbcType=VARCHAR},
+      </if>
+      <if test="manufacturerName != null">
+        manufacturer_name = #{manufacturerName,jdbcType=VARCHAR},
+      </if>
+      <if test="model != null">
+        model = #{model,jdbcType=VARCHAR},
+      </if>
+      <if test="protocolType != null">
+        protocol_type = #{protocolType,jdbcType=VARCHAR},
+      </if>
+      <if test="statusDetail != null">
+        status_detail = #{statusDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="mute != null">
+        mute = #{mute,jdbcType=VARCHAR},
+      </if>
+      <if test="supportedSecurity != null">
+        supported_security = #{supportedSecurity,jdbcType=VARCHAR},
+      </if>
+      <if test="isSecurity != null">
+        is_security = #{isSecurity,jdbcType=VARCHAR},
+      </if>
+      <if test="signalStrength != null">
+        signal_strength = #{signalStrength,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryLevel != null">
+        battery_level = #{batteryLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="isHd != null">
+        is_hd = #{isHd,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
-        REMARK = #{remark,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
       </if>
     </set>
-    where SERIAL_NUMBER = #{serialNumber,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.aw.braceletserver.model.Device">
     update device
-    set DEVICE_ID = #{deviceId,jdbcType=INTEGER},
-      DEVICE_NAME = #{deviceName,jdbcType=VARCHAR},
-      NICK_NAME = #{nickName,jdbcType=VARCHAR},
-      DEVICE_TYPE = #{deviceType,jdbcType=INTEGER},
-      STATUS = #{status,jdbcType=INTEGER},
-      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
-      REMARK = #{remark,jdbcType=VARCHAR}
-    where SERIAL_NUMBER = #{serialNumber,jdbcType=VARCHAR}
+    set idcode = #{idcode,jdbcType=VARCHAR},
+      iot_deviceid = #{iotDeviceid,jdbcType=VARCHAR},
+      sn = #{sn,jdbcType=VARCHAR},
+      imei = #{imei,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      sw_version = #{swVersion,jdbcType=VARCHAR},
+      fw_version = #{fwVersion,jdbcType=VARCHAR},
+      hw_version = #{hwVersion,jdbcType=VARCHAR},
+      sig_version = #{sigVersion,jdbcType=VARCHAR},
+      mac = #{mac,jdbcType=VARCHAR},
+      location = #{location,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      manufacturer_id = #{manufacturerId,jdbcType=VARCHAR},
+      manufacturer_name = #{manufacturerName,jdbcType=VARCHAR},
+      model = #{model,jdbcType=VARCHAR},
+      protocol_type = #{protocolType,jdbcType=VARCHAR},
+      status_detail = #{statusDetail,jdbcType=VARCHAR},
+      mute = #{mute,jdbcType=VARCHAR},
+      supported_security = #{supportedSecurity,jdbcType=VARCHAR},
+      is_security = #{isSecurity,jdbcType=VARCHAR},
+      signal_strength = #{signalStrength,jdbcType=VARCHAR},
+      battery_level = #{batteryLevel,jdbcType=VARCHAR},
+      is_hd = #{isHd,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectDeviceByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    <!--
-      WARNING - @mbggenerated
-      This element is automatically generated by MyBatis Generator, do not modify.
-      This element was generated on Sun May 19 22:54:34 CST 2019.
-    -->
-    select
-    <include refid="Base_Column_List" />
-    from device d
-    where DEVICE_ID in (
-    select DEVICE_ID from user_group where user_id = #{userId,jdbcType=INTEGER}
-    )
-  </select>
-  <select id="selectMaxDeviceId" resultType="java.lang.Integer">
-	select max(DEVICE_ID)
-	from device for update
-  </select>
 </mapper>

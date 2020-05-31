@@ -1,6 +1,6 @@
 package com.aw.braceletserver.utils;
 
-import com.aw.braceletserver.constants.Constant;
+import com.aw.braceletserver.constants.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
@@ -49,7 +49,7 @@ public class HttpUtil {
 	/**
 	 * 默认字符集
 	 */
-	private static final String defaultCharset = Constant.CHARSET.UTF8;
+	private static final String defaultCharset = Constants.CHARSET.UTF8;
 	
 	/**
 	 * 请求失败重试次数
@@ -479,7 +479,7 @@ public class HttpUtil {
 			HttpEntity entity = response.getEntity(); // 获取响应实体
 			try {
 				if (null != entity) {
-					responseContent = EntityUtils.toString(entity, Charset.forName(Constant.CHARSET.UTF8));
+					responseContent = EntityUtils.toString(entity, Charset.forName(Constants.CHARSET.UTF8));
 				}
 			} finally {
 				if (entity != null) {

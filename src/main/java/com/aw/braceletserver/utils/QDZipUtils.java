@@ -1,7 +1,7 @@
 package com.aw.braceletserver.utils;
 
 
-import com.aw.braceletserver.constants.Constant;
+import com.aw.braceletserver.constants.Constants;
 import org.apache.commons.lang.CharEncoding;
 
 import java.io.*;
@@ -56,10 +56,10 @@ public class QDZipUtils {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		DataOutputStream dos = new DataOutputStream(os);
 		String head = "QDDATA";
-		byte[] headByts = head.getBytes(Constant.CHARSET.UTF8);
+		byte[] headByts = head.getBytes(Constants.CHARSET.UTF8);
 		dos.write(headByts);
 		String meta = "ver=1&cm=gz";
-		byte[] metaBytes = meta.getBytes(Constant.CHARSET.UTF8);
+		byte[] metaBytes = meta.getBytes(Constants.CHARSET.UTF8);
 		dos.writeShort(metaBytes.length);
 		dos.write(metaBytes);
 		// 压缩数据

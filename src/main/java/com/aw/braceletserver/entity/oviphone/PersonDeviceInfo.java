@@ -230,11 +230,11 @@ public class PersonDeviceInfo {
         this.homeFx = homeFx;
     }
 
-    public Integer getUserGroupId() {
+    public Integer getUserDeviceId() {
         return userGroupId;
     }
 
-    public void setUserGroupId(Integer userGroupId) {
+    public void setUserDeviceId(Integer userGroupId) {
         this.userGroupId = userGroupId;
     }
 

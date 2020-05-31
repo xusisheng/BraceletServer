@@ -30,7 +30,7 @@
         introspectedColumnImpl：类全限定名，用于扩展MBG
     -->
     <!-- 数据库驱动:选择你的本地硬盘上面的数据库驱动包-->
-<!--    <classPathEntry location="/Users/xusisheng/repository/mysql/mysql-connector-java/5.1.47/mysql-connector-java-5.1.47.jar"/>-->
+    <classPathEntry location="/Users/xusisheng/repository/mysql/mysql-connector-java/5.1.47/mysql-connector-java-5.1.47.jar"/>
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <!-- 自动识别数据库关键字，默认false，如果设置为true，根据SqlReservedWords中定义的关键字列表；
             一般保留默认值，遇到数据库关键字（Java关键字），使用columnOverride覆盖
@@ -55,9 +55,9 @@
 
         <!--数据库链接URL，用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost/tianwen"
+                        connectionURL="jdbc:mysql://localhost/bracelet?nullCatalogMeansCurrent=true"
                         userId="root"
-                        password="Mysql_200">
+                        password="canada">
         </jdbcConnection>
 
         <!-- 类型转换处理器
@@ -167,15 +167,23 @@
             15，delimitAllColumns：设置是否所有生成的SQL中的列名都使用标识符引起来。默认为false，delimitIdentifiers参考context的属性
             注意，table里面很多参数都是对javaModelGenerator，context等元素的默认属性的一个复写；
          -->
+<!--
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/DevicePositionMapper.xml
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/mapper/DevicePositionMapper.java
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/model/DevicePosition.java
+
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/UserDeviceMapper.xml
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/mapper/UserDeviceMapper.java
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/model/UserDevice.java
+
+rm -rf /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/mapper/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/model/*
+-->
         <table tableName="device" domainObjectName="Device"></table>
-        <table tableName="device_alarm_record" domainObjectName="DeviceAlarmRecord"></table>
-<!--        <table tableName="device_event_remind" domainObjectName="DeviceEventRemind"></table>-->
-<!--        <table tableName="device_geofence" domainObjectName="DeviceGeofence"></table>-->
+<!--        <table tableName="device_alarm_record" domainObjectName="DeviceAlarmRecord"></table>-->
         <table tableName="device_position" domainObjectName="DevicePosition"></table>
-        <table tableName="health" domainObjectName="Health"></table>
-<!--        <table tableName="health_config" domainObjectName="HealthConfig"></table>-->
-        <table tableName="tx_user" domainObjectName="TxUser"></table>
-        <table tableName="user_group" domainObjectName="UserGroup"></table>
+<!--        <table tableName="health" domainObjsectName="Health"></table>-->
+        <table tableName="user" domainObjectName="User"></table>
+        <table tableName="user_device" domainObjectName="UserDevice"></table>
 
 <!--        <table tableName="userinfo" >-->
 
