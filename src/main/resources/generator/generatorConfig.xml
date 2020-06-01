@@ -77,7 +77,7 @@
         </javaTypeResolver>
 
         <!-- 生成模型的包名和位置-->
-        <javaModelGenerator targetPackage="com.aw.braceletserver.model" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.aw.bracelet.model" targetProject="src/main/java">
             <!--  for MyBatis3/MyBatis3Simple
                 自动为每一个生成的类创建一个构造方法，构造方法包含了所有的field；而不是使用setter；
              -->
@@ -122,7 +122,7 @@
                 3，XMLMAPPER：会生成Mapper接口，接口完全依赖XML；
             注意，如果context是MyBatis3Simple：只支持ANNOTATEDMAPPER和XMLMAPPER
         -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.aw.braceletserver.mapper" targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.aw.bracelet.mapper" targetProject="src/main/java">
             <!-- 在targetPackage的基础上，根据数据库的schema再生成一层package，最终生成的类放在这个package下，默认为false -->
             <property name="enableSubPackages" value="true"/>
 
@@ -169,14 +169,14 @@
          -->
 <!--
 rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/DevicePositionMapper.xml
-rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/mapper/DevicePositionMapper.java
-rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/model/DevicePosition.java
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/mapper/DevicePositionMapper.java
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/model/DevicePosition.java
 
 rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/UserDeviceMapper.xml
-rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/mapper/UserDeviceMapper.java
-rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/model/UserDevice.java
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/mapper/UserDeviceMapper.java
+rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/model/UserDevice.java
 
-rm -rf /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/mapper/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/braceletserver/model/*
+rm -rf /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/mapper/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/model/*
 -->
         <table tableName="device" domainObjectName="Device"></table>
 <!--        <table tableName="device_alarm_record" domainObjectName="DeviceAlarmRecord"></table>-->

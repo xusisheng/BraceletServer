@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.aw.braceletserver.mapper.DevicePositionMapper">
-  <resultMap id="BaseResultMap" type="com.aw.braceletserver.model.DevicePosition">
+<mapper namespace="com.aw.bracelet.mapper.DevicePositionMapper">
+  <resultMap id="BaseResultMap" type="com.aw.bracelet.model.DevicePosition">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="device_id" jdbcType="BIGINT" property="deviceId" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
@@ -92,7 +92,7 @@
     temperature, steps, deep_sleep, light_sleep, roll, wake, quality, online_status, 
     create_time
   </sql>
-  <select id="selectByExample" parameterType="com.aw.braceletserver.model.DevicePositionExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.aw.bracelet.model.DevicePositionExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -116,13 +116,13 @@
     delete from device_position
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.aw.braceletserver.model.DevicePositionExample">
+  <delete id="deleteByExample" parameterType="com.aw.bracelet.model.DevicePositionExample">
     delete from device_position
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.aw.braceletserver.model.DevicePosition">
+  <insert id="insert" parameterType="com.aw.bracelet.model.DevicePosition">
     insert into device_position (id, device_id, user_id, 
       uptime, message_type, locate_mode, 
       longitude, latitude, altitude, 
@@ -142,7 +142,7 @@
       #{wake,jdbcType=INTEGER}, #{quality,jdbcType=INTEGER}, #{onlineStatus,jdbcType=BIT}, 
       #{createTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.aw.braceletserver.model.DevicePosition">
+  <insert id="insertSelective" parameterType="com.aw.bracelet.model.DevicePosition">
     insert into device_position
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -299,7 +299,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.aw.braceletserver.model.DevicePositionExample" resultType="java.lang.Long">
+  <select id="countByExample" parameterType="com.aw.bracelet.model.DevicePositionExample" resultType="java.lang.Long">
     select count(*) from device_position
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -419,7 +419,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.aw.braceletserver.model.DevicePosition">
+  <update id="updateByPrimaryKeySelective" parameterType="com.aw.bracelet.model.DevicePosition">
     update device_position
     <set>
       <if test="deviceId != null">
@@ -497,7 +497,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.aw.braceletserver.model.DevicePosition">
+  <update id="updateByPrimaryKey" parameterType="com.aw.bracelet.model.DevicePosition">
     update device_position
     set device_id = #{deviceId,jdbcType=BIGINT},
       user_id = #{userId,jdbcType=BIGINT},
@@ -567,5 +567,22 @@
       GROUP BY dp.device_id
     ) a
     WHERE p.device_id = a.device_id AND p.uptime = a.uptime
+  </select>
+  <select id="selectSosByUserIdTime" resultType="java.util.HashMap">
+    SELECT
+        CASE dp.message_type WHEN "DEVSOS" THEN 1 ELSE 0 END type,dp.altitude, dp.disastolic dbp,
+        dp.shrink sbp, d.sn deviceId, dp.heart_beat heartRate, dp.longitude lon, dp.latitude lat, UNIX_TIMESTAMP(dp.uptime) upTime
+    FROM device_position dp
+    INNER JOIN user_device ud ON dp.device_id = ud.device_id
+    INNER JOIN device d ON d.id = ud.device_id
+    WHERE ud.user_id = #{userId, jdbcType=BIGINT}
+    <if test="startTime != null and startTime != '' ">
+      AND uptime <![CDATA[ >= ]]> #{startTime}
+    </if>
+    <if test="endTime != null and endTime != '' ">
+      AND uptime <![CDATA[ <= ]]> #{endTime}
+    </if>
+    ORDER BY dp.uptime DESC
+    LIMIT 2000
   </select>
 </mapper>
