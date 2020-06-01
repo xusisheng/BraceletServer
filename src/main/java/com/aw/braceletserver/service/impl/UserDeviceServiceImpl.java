@@ -22,8 +22,8 @@ public class UserDeviceServiceImpl implements UserDeviceService {
         return userDeviceMapper.insert(entity);
     }
 
-    @Override
-    public List<UserDevice> selectByIdSet(Long userId, Long[] ids) {
-        return userDeviceMapper.selectByIdSet(userId, ids);
-    }
+//    @Override
+//    public List<UserDevice> selectBySnSet(Long userId, String[] ids) {
+//        return userDeviceMapper.selectBySnSet(userId, ids);
+//    }
 }

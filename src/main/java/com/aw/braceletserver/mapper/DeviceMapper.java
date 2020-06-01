@@ -30,4 +30,6 @@ public interface DeviceMapper {
     int updateByPrimaryKeySelective(Device record);
 
     int updateByPrimaryKey(Device record);
+
+    List<Device> selectBySnSet(@Param("userId") Long userId, @Param("sns") String[] sns);
 }

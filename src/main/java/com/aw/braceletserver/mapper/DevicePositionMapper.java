@@ -31,5 +31,9 @@ public interface DevicePositionMapper {
 
     int updateByPrimaryKey(DevicePosition record);
 
-    List<DevicePosition> getLastedNDevicePositionByDeviceId(@Param("deviceId") Long deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("limit") Integer limit);
+    List<DevicePosition> getLastestNByDeviceId(@Param("deviceId") Long deviceId, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("limit") Integer limit);
+
+    List<DevicePosition> selectLastestBySnSet(@Param("userId") Long userId, @Param("sns") String[] sns);
+
+    List<DevicePosition> selectLastestByUserId(@Param("userId") Long userId);
 }

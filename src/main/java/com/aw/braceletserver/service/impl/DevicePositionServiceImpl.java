@@ -23,7 +23,17 @@ public class DevicePositionServiceImpl implements DevicePositionService {
     }
 
     @Override
-    public List<DevicePosition> getLastedNDevicePositionByDeviceId(Long deviceId, String startTime, String endTime, Integer limit) {
-        return devicePositionMapper.getLastedNDevicePositionByDeviceId(deviceId, startTime, endTime, limit);
+    public List<DevicePosition> getLastestNByDeviceId(Long deviceId, String startTime, String endTime, Integer limit) {
+        return devicePositionMapper.getLastestNByDeviceId(deviceId, startTime, endTime, limit);
+    }
+
+    @Override
+    public List<DevicePosition> selectLastestBySnSet(Long userId, String[] sns) {
+        return devicePositionMapper.selectLastestBySnSet(userId, sns);
+    }
+
+    @Override
+    public List<DevicePosition> selectLastestByUserId(Long userId) {
+        return devicePositionMapper.selectLastestByUserId(userId);
     }
 }

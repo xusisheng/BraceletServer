@@ -1,6 +1,7 @@
 package com.aw.braceletserver.service;
 
 import com.aw.braceletserver.BraceletServerApplication;
+import com.aw.braceletserver.model.Device;
 import com.aw.braceletserver.model.UserDevice;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +21,7 @@ public class UserDeviceServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(UserDeviceServiceTest.class);
 
     @Autowired
-    private UserDeviceService userDeviceService;
+    private DeviceService deviceService;
 
     @Test
     public void insert() {
@@ -28,8 +29,8 @@ public class UserDeviceServiceTest {
 
     @Test
     public void selectByIdSet() {
-        Long[] ids = {1000L, 10125L};
-        List<UserDevice> list = userDeviceService.selectByIdSet(33845L, ids);
+        String[] ids = {"1000", "10125"};
+        List<Device> list = deviceService.selectBySnSet(33845L, ids);
         logger.debug("OK");
     }
 }

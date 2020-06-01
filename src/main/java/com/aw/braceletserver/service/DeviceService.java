@@ -3,6 +3,7 @@ package com.aw.braceletserver.service;
 import com.aw.braceletserver.model.Device;
 import com.aw.braceletserver.model.DevicePosition;
 import com.aw.braceletserver.model.UserDevice;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,19 @@ public interface DeviceService {
      * @return
      */
     Device getDeviceByIotid(String iotid);
+
+    /**
+     * 依据用户和设备序列号列表查询设备状态
+     *
+     * @param userId
+     * @param sns
+     * @return
+     */
+    List<Device> selectBySnSet(Long userId, String[] sns);
+
+
+
+
 
     /**
      * 根据设备imei唯一标识获取设备信息

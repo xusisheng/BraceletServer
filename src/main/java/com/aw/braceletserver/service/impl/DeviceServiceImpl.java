@@ -53,6 +53,11 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
+    public List<Device> selectBySnSet(Long userId, String[] sns) {
+        return deviceMapper.selectBySnSet(userId, sns);
+    }
+
+    @Override
     public Device getDeviceByImei(String serialNumber) {
         //TODO
         return deviceMapper.selectByPrimaryKey(0L);

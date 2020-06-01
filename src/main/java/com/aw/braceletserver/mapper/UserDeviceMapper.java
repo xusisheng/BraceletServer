@@ -31,5 +31,5 @@ public interface UserDeviceMapper {
 
     int updateByPrimaryKey(UserDevice record);
 
-    List<UserDevice> selectByIdSet(@Param("userId") Long userId, @Param("ids") Long[] ids);
+//    List<UserDevice> selectBySnSet(@Param("userId") Long userId, @Param("ids") String[] ids);
 }

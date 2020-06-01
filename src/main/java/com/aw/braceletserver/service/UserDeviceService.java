@@ -21,5 +21,5 @@ public interface UserDeviceService {
      * @param ids
      * @return
      */
-    List<UserDevice> selectByIdSet(Long userId, Long[] ids);
+//    List<UserDevice> selectBySnSet(Long userId, String[] ids);
 }

@@ -1,6 +1,7 @@
 package com.aw.braceletserver.service;
 
 import com.aw.braceletserver.model.DevicePosition;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,5 +23,20 @@ public interface DevicePositionService {
      * @param limit
      * @return
      */
-    List<DevicePosition> getLastedNDevicePositionByDeviceId(Long deviceId, String startTime, String endTime, Integer limit);
+    List<DevicePosition> getLastestNByDeviceId(Long deviceId, String startTime, String endTime, Integer limit);
+
+    /**
+     * 依据设备ID列表查询最后位置记录
+     * @param userId
+     * @param sns
+     * @return
+     */
+    List<DevicePosition> selectLastestBySnSet(Long userId, String[] sns);
+
+    /**
+     * 依据用户ID列表查询最后位置记录
+     * @param userId
+     * @return
+     */
+    List<DevicePosition> selectLastestByUserId(Long userId);
 }

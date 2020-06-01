@@ -525,7 +525,7 @@
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id = 'getLastedNDevicePositionByDeviceId' resultMap="BaseResultMap">
+  <select id = 'getLastestNByDeviceId' resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List" />
     FROM device_position
@@ -538,5 +538,34 @@
     </if>
     ORDER BY uptime DESC
     LIMIT #{limit, jdbcType=INTEGER}
+  </select>
+  <select id="selectLastestBySnSet" resultMap="BaseResultMap">
+    SELECT
+    p.*
+    FROM device_position p, (
+        SELECT dp.device_id, max( dp.uptime ) uptime
+        FROM device_position dp
+        INNER JOIN user_device ud ON dp.device_id = ud.device_id
+        INNER JOIN device d ON d.id = ud.device_id
+        WHERE ud.user_id = #{userId, jdbcType=BIGINT} AND d.sn IN
+        <foreach collection="sns" item="sn" index="index" open="(" close=")" separator=",">
+            #{sn}
+        </foreach>
+        GROUP BY dp.device_id
+    ) a
+    WHERE p.device_id = a.device_id AND p.uptime = a.uptime
+  </select>
+  <select id="selectLastestByUserId" resultMap="BaseResultMap">
+    SELECT
+    p.*
+    FROM device_position p, (
+      SELECT dp.device_id, max( dp.uptime ) uptime
+      FROM device_position dp
+      INNER JOIN user_device ud ON dp.device_id = ud.device_id
+      INNER JOIN device d ON d.id = ud.device_id
+      WHERE ud.user_id = #{userId, jdbcType=BIGINT}
+      GROUP BY dp.device_id
+    ) a
+    WHERE p.device_id = a.device_id AND p.uptime = a.uptime
   </select>
 </mapper>

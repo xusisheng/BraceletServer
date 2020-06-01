@@ -587,4 +587,13 @@
       remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectBySnSet" resultMap="BaseResultMap">
+    SELECT
+    d.*
+    FROM device d INNER JOIN user_device ud ON d.id = ud.device_id
+    WHERE user_id = #{userId, jdbcType=BIGINT} AND sn IN
+    <foreach collection="sns" item="sn" index="index" open="(" close=")" separator=",">
+      #{sn}
+    </foreach>
+  </select>
 </mapper>
