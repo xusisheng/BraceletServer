@@ -226,6 +226,76 @@ public class DevicePositionExample {
             return (Criteria) this;
         }
 
+        public Criteria andIdcodeIsNull() {
+            addCriterion("idcode is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeIsNotNull() {
+            addCriterion("idcode is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeEqualTo(String value) {
+            addCriterion("idcode =", value, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeNotEqualTo(String value) {
+            addCriterion("idcode <>", value, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeGreaterThan(String value) {
+            addCriterion("idcode >", value, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeGreaterThanOrEqualTo(String value) {
+            addCriterion("idcode >=", value, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeLessThan(String value) {
+            addCriterion("idcode <", value, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeLessThanOrEqualTo(String value) {
+            addCriterion("idcode <=", value, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeLike(String value) {
+            addCriterion("idcode like", value, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeNotLike(String value) {
+            addCriterion("idcode not like", value, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeIn(List<String> values) {
+            addCriterion("idcode in", values, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeNotIn(List<String> values) {
+            addCriterion("idcode not in", values, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeBetween(String value1, String value2) {
+            addCriterion("idcode between", value1, value2, "idcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdcodeNotBetween(String value1, String value2) {
+            addCriterion("idcode not between", value1, value2, "idcode");
+            return (Criteria) this;
+        }
+
         public Criteria andUserIdIsNull() {
             addCriterion("user_id is null");
             return (Criteria) this;

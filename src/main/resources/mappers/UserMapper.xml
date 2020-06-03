@@ -116,27 +116,30 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.aw.bracelet.model.User">
-    insert into user (id, login_name, password, 
-      nickname, token, avatar, 
-      email, telephone, address, 
-      sex, group_id, online, login_time, 
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into user (login_name, password, nickname, 
+      token, avatar, email, 
+      telephone, address, sex, 
+      group_id, online, login_time, 
       logout_time, login_ip, create_time, 
       status, height, weight
       )
-    values (#{id,jdbcType=BIGINT}, #{loginName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{nickname,jdbcType=VARCHAR}, #{token,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
-      #{sex,jdbcType=INTEGER}, #{groupId,jdbcType=INTEGER}, #{online,jdbcType=BIT}, #{loginTime,jdbcType=TIMESTAMP}, 
+    values (#{loginName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
+      #{token,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{telephone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, 
+      #{groupId,jdbcType=INTEGER}, #{online,jdbcType=BIT}, #{loginTime,jdbcType=TIMESTAMP}, 
       #{logoutTime,jdbcType=TIMESTAMP}, #{loginIp,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{status,jdbcType=VARCHAR}, #{height,jdbcType=INTEGER}, #{weight,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.aw.bracelet.model.User">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="loginName != null">
         login_name,
       </if>
@@ -193,9 +196,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="loginName != null">
         #{loginName,jdbcType=VARCHAR},
       </if>

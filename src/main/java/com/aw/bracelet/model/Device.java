@@ -21,8 +21,6 @@ public class Device {
 
     private Integer status;
 
-    private Date createTime;
-
     private String swVersion;
 
     private String fwVersion;
@@ -60,6 +58,8 @@ public class Device {
     private String isHd;
 
     private String remark;
+
+    private Date createTime;
 
     public Long getId() {
         return id;
@@ -131,14 +131,6 @@ public class Device {
 
     public void setStatus(Integer status) {
         this.status = status;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
     public String getSwVersion() {
@@ -291,5 +283,13 @@ public class Device {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

@@ -11,7 +11,6 @@
     <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="sw_version" jdbcType="VARCHAR" property="swVersion" />
     <result column="fw_version" jdbcType="VARCHAR" property="fwVersion" />
     <result column="hw_version" jdbcType="VARCHAR" property="hwVersion" />
@@ -31,6 +30,7 @@
     <result column="battery_level" jdbcType="VARCHAR" property="batteryLevel" />
     <result column="is_hd" jdbcType="VARCHAR" property="isHd" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -91,10 +91,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, idcode, iot_deviceid, sn, imei, name, nickname, type, status, create_time, sw_version, 
-    fw_version, hw_version, sig_version, mac, location, description, manufacturer_id, 
-    manufacturer_name, model, protocol_type, status_detail, mute, supported_security, 
-    is_security, signal_strength, battery_level, is_hd, remark
+    id, idcode, iot_deviceid, sn, imei, name, nickname, type, status, sw_version, fw_version, 
+    hw_version, sig_version, mac, location, description, manufacturer_id, manufacturer_name, 
+    model, protocol_type, status_detail, mute, supported_security, is_security, signal_strength, 
+    battery_level, is_hd, remark, create_time
   </sql>
   <select id="selectByExample" parameterType="com.aw.bracelet.model.DeviceExample" resultMap="BaseResultMap">
     select
@@ -127,33 +127,36 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.aw.bracelet.model.Device">
-    insert into device (id, idcode, iot_deviceid, 
-      sn, imei, name, nickname, 
-      type, status, create_time, 
-      sw_version, fw_version, hw_version, 
-      sig_version, mac, location, 
-      description, manufacturer_id, manufacturer_name, 
-      model, protocol_type, status_detail, 
-      mute, supported_security, is_security, 
-      signal_strength, battery_level, is_hd, 
-      remark)
-    values (#{id,jdbcType=BIGINT}, #{idcode,jdbcType=VARCHAR}, #{iotDeviceid,jdbcType=VARCHAR}, 
-      #{sn,jdbcType=VARCHAR}, #{imei,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
-      #{type,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{swVersion,jdbcType=VARCHAR}, #{fwVersion,jdbcType=VARCHAR}, #{hwVersion,jdbcType=VARCHAR}, 
-      #{sigVersion,jdbcType=VARCHAR}, #{mac,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR}, #{manufacturerId,jdbcType=VARCHAR}, #{manufacturerName,jdbcType=VARCHAR}, 
-      #{model,jdbcType=VARCHAR}, #{protocolType,jdbcType=VARCHAR}, #{statusDetail,jdbcType=VARCHAR}, 
-      #{mute,jdbcType=VARCHAR}, #{supportedSecurity,jdbcType=VARCHAR}, #{isSecurity,jdbcType=VARCHAR}, 
-      #{signalStrength,jdbcType=VARCHAR}, #{batteryLevel,jdbcType=VARCHAR}, #{isHd,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into device (idcode, iot_deviceid, sn, 
+      imei, name, nickname, 
+      type, status, sw_version, 
+      fw_version, hw_version, sig_version, 
+      mac, location, description, 
+      manufacturer_id, manufacturer_name, model, 
+      protocol_type, status_detail, mute, 
+      supported_security, is_security, signal_strength, 
+      battery_level, is_hd, remark, 
+      create_time)
+    values (#{idcode,jdbcType=VARCHAR}, #{iotDeviceid,jdbcType=VARCHAR}, #{sn,jdbcType=VARCHAR}, 
+      #{imei,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{swVersion,jdbcType=VARCHAR}, 
+      #{fwVersion,jdbcType=VARCHAR}, #{hwVersion,jdbcType=VARCHAR}, #{sigVersion,jdbcType=VARCHAR}, 
+      #{mac,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{manufacturerId,jdbcType=VARCHAR}, #{manufacturerName,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, 
+      #{protocolType,jdbcType=VARCHAR}, #{statusDetail,jdbcType=VARCHAR}, #{mute,jdbcType=VARCHAR}, 
+      #{supportedSecurity,jdbcType=VARCHAR}, #{isSecurity,jdbcType=VARCHAR}, #{signalStrength,jdbcType=VARCHAR}, 
+      #{batteryLevel,jdbcType=VARCHAR}, #{isHd,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.aw.bracelet.model.Device">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into device
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="idcode != null">
         idcode,
       </if>
@@ -177,9 +180,6 @@
       </if>
       <if test="status != null">
         status,
-      </if>
-      <if test="createTime != null">
-        create_time,
       </if>
       <if test="swVersion != null">
         sw_version,
@@ -238,11 +238,11 @@
       <if test="remark != null">
         remark,
       </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="idcode != null">
         #{idcode,jdbcType=VARCHAR},
       </if>
@@ -266,9 +266,6 @@
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="swVersion != null">
         #{swVersion,jdbcType=VARCHAR},
@@ -327,6 +324,9 @@
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.aw.bracelet.model.DeviceExample" resultType="java.lang.Long">
@@ -364,9 +364,6 @@
       </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
-      </if>
-      <if test="record.createTime != null">
-        create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.swVersion != null">
         sw_version = #{record.swVersion,jdbcType=VARCHAR},
@@ -425,6 +422,9 @@
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -441,7 +441,6 @@
       nickname = #{record.nickname,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
       sw_version = #{record.swVersion,jdbcType=VARCHAR},
       fw_version = #{record.fwVersion,jdbcType=VARCHAR},
       hw_version = #{record.hwVersion,jdbcType=VARCHAR},
@@ -460,7 +459,8 @@
       signal_strength = #{record.signalStrength,jdbcType=VARCHAR},
       battery_level = #{record.batteryLevel,jdbcType=VARCHAR},
       is_hd = #{record.isHd,jdbcType=VARCHAR},
-      remark = #{record.remark,jdbcType=VARCHAR}
+      remark = #{record.remark,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -491,9 +491,6 @@
       </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="swVersion != null">
         sw_version = #{swVersion,jdbcType=VARCHAR},
@@ -552,6 +549,9 @@
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -565,7 +565,6 @@
       nickname = #{nickname,jdbcType=VARCHAR},
       type = #{type,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
       sw_version = #{swVersion,jdbcType=VARCHAR},
       fw_version = #{fwVersion,jdbcType=VARCHAR},
       hw_version = #{hwVersion,jdbcType=VARCHAR},
@@ -584,7 +583,8 @@
       signal_strength = #{signalStrength,jdbcType=VARCHAR},
       battery_level = #{batteryLevel,jdbcType=VARCHAR},
       is_hd = #{isHd,jdbcType=VARCHAR},
-      remark = #{remark,jdbcType=VARCHAR}
+      remark = #{remark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectBySnSet" resultMap="BaseResultMap">

@@ -43,24 +43,33 @@ public class IotServiceImpl implements IotService {
     @Autowired
     private DevicePositionService devicePositionService;
 
+    private DeviceStatus getDeviceStatus(String status) {
+        try {
+            return EnumHelperUtil.getByStringTypeCode(Constants.DeviceStatus.class, "getValue", status);
+        } catch (Exception e) {
+            logger.warn("设备状态不合法！");
+        }
+        return DeviceStatus.OFFLINE;
+    }
+
     @Override
     public Boolean deviceAdded(RegDeviceAdded data) {
         //检查通知类型
         if (!data.getNotifyType().equalsIgnoreCase("deviceAdded")) {
-            logger.warn("通知类型错误!!!");
+            logger.warn("添加设备时通知类型错误!!!");
             return true;
         }
         String iotDeviceId = data.getDeviceId();
         String nodeType = data.getNodeType();
         if (StringUtils.isBlank(iotDeviceId) || StringUtils.isBlank(nodeType)) {
-            logger.warn("设备ID和设备类型不能为空!!!");
+            logger.warn("添加设备时设备ID和设备类型不能为空!!!");
             return true;
         }
         DeviceInfo deviceInfo = data.getDeviceInfo();
-        long did = 0;
         Device device = deviceService.getDeviceByIotid(iotDeviceId);
         if (device == null) {
             //新增加设备
+            logger.info("设备：{} 不存在，新增该设备", iotDeviceId);
             device = new Device();
             try {
                 BeanUtils.copyProperties(device, deviceInfo);
@@ -70,23 +79,22 @@ public class IotServiceImpl implements IotService {
                 e.printStackTrace();
             }
             device.setIotDeviceid(iotDeviceId);
-            device.setMac(StringUtils.isBlank(deviceInfo.getMac()) ? deviceInfo.getNodeId() : deviceInfo.getMac());
-            DeviceStatus deviceStatus = EnumHelperUtil.getByStringTypeCode(Constants.DeviceStatus.class, "getValue", deviceInfo.getStatus());
-            device.setStatus(deviceStatus.getCode());
+            device.setIdcode(deviceInfo.getNodeId());
+            device.setMac(deviceInfo.getMac());
+            device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
             device.setCreateTime(new Date());
-            did = deviceService.insert(device);
-            device.setId((long)did);
+            deviceService.insert(device);
 
             //绑定设备到用户（插入用户设备关系表）
             UserDevice userDevice = new UserDevice();
             userDevice.setUserId(Constants.USERID);
-            userDevice.setDeviceId(did);
+            userDevice.setDeviceId(device.getId());
             userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
             userDevice.setCreateTime(new Date());
             if (userDeviceService.insert(userDevice) > 0) {
-                logger.info("绑定用户成功");
+                logger.info("添加设备时绑定用户成功");
             } else {
-                logger.info("绑定用户失败");
+                logger.info("添加设备时绑定用户失败");
             }
         } else {
             //更新设备信息
@@ -98,9 +106,9 @@ public class IotServiceImpl implements IotService {
                 e.printStackTrace();
             }
             device.setIotDeviceid(iotDeviceId);
-            device.setMac(StringUtils.isBlank(deviceInfo.getMac()) ? deviceInfo.getNodeId() : deviceInfo.getMac());
-            DeviceStatus deviceStatus = EnumHelperUtil.getByStringTypeCode(Constants.DeviceStatus.class, "getValue", deviceInfo.getStatus());
-            device.setStatus(deviceStatus.getCode());
+            device.setIdcode(deviceInfo.getNodeId());
+            device.setMac(deviceInfo.getMac());
+            device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
             deviceService.updateByPrimaryKeySelective(device);
         }
         return true;
@@ -110,15 +118,15 @@ public class IotServiceImpl implements IotService {
     public Boolean deviceInfoChanged(RegDeviceInfoChanged data) {
         //检查通知类型
         if (!data.getNotifyType().equalsIgnoreCase("deviceInfoChanged")) {
-            logger.warn("通知类型错误!!!");
+            logger.warn("设备信息变更时通知类型错误!!!");
             return true;
         }
         String iotDeviceId = data.getDeviceId();
         DeviceInfo deviceInfo = data.getDeviceInfo();
-        long did = 0;
         Device device = deviceService.getDeviceByIotid(iotDeviceId);
         if (device == null) {
             //新增加设备
+            logger.info("设备信息变更时设备：{} 不存在，新增该设备", iotDeviceId);
             device = new Device();
             try {
                 BeanUtils.copyProperties(device, deviceInfo);
@@ -128,28 +136,22 @@ public class IotServiceImpl implements IotService {
                 e.printStackTrace();
             }
             device.setIotDeviceid(iotDeviceId);
-            device.setMac(StringUtils.isBlank(deviceInfo.getMac()) ? deviceInfo.getNodeId() : deviceInfo.getMac());
-            DeviceStatus deviceStatus = DeviceStatus.OFFLINE;
-            try {
-                deviceStatus = EnumHelperUtil.getByStringTypeCode(Constants.DeviceStatus.class, "getValue", deviceInfo.getStatus());
-            } catch (Exception e) {
-                logger.warn("设备状态不合法！");
-            }
-            device.setStatus(deviceStatus.getCode());
+            device.setIdcode(deviceInfo.getNodeId());
+            device.setMac(deviceInfo.getMac());
+            device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
             device.setCreateTime(new Date());
-            did = deviceService.insert(device);
-            device.setId((long)did);
+            deviceService.insert(device);
 
             //绑定设备到用户（插入用户设备关系表）
             UserDevice userDevice = new UserDevice();
             userDevice.setUserId(Constants.USERID);
-            userDevice.setDeviceId(did);
+            userDevice.setDeviceId(device.getId());
             userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
             userDevice.setCreateTime(new Date());
             if (userDeviceService.insert(userDevice) > 0) {
-                logger.info("绑定用户成功");
+                logger.info("设备信息变更时绑定用户成功");
             } else {
-                logger.info("绑定用户失败");
+                logger.info("设备信息变更时绑定用户失败");
             }
         } else {
             //更新设备信息
@@ -161,9 +163,9 @@ public class IotServiceImpl implements IotService {
                 e.printStackTrace();
             }
             device.setIotDeviceid(iotDeviceId);
-            device.setMac(StringUtils.isBlank(deviceInfo.getMac()) ? deviceInfo.getNodeId() : deviceInfo.getMac());
-            DeviceStatus deviceStatus = EnumHelperUtil.getByStringTypeCode(Constants.DeviceStatus.class, "getValue", deviceInfo.getStatus());
-            device.setStatus(deviceStatus.getCode());
+            device.setIdcode(deviceInfo.getNodeId());
+            device.setMac(deviceInfo.getMac());
+            device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
             deviceService.updateByPrimaryKeySelective(device);
         }
         return true;
@@ -173,7 +175,7 @@ public class IotServiceImpl implements IotService {
     public Boolean deviceDataChanged(RegDeviceDataChanged data) {
         //检查通知类型
         if (!data.getNotifyType().equalsIgnoreCase("deviceDataChanged")) {
-            logger.warn("通知类型错误!!!");
+            logger.warn("设备数据变化时通知类型错误!!!");
             return true;
         }
         //检查设备
@@ -181,26 +183,26 @@ public class IotServiceImpl implements IotService {
         Device device = deviceService.getDeviceByIotid(iotDeviceId);
         ObjectNode on = data.getService().getData();
         if (device == null) {
-            logger.info("设备：{} 不存在，新增该设备", iotDeviceId);
+            logger.info("设备数据变化时设备：{} 不存在，新增该设备", iotDeviceId);
             device = new Device();
             device.setIdcode(on.get("DeviceID").asText());
             device.setIotDeviceid(iotDeviceId);
             device.setImei(on.get("IMEI").asText());
             device.setSn(on.get("DeviceID").asText());
             device.setCreateTime(new Date());
-            long did = deviceService.insert(device);
-            device.setId((long)did);
+            device.setStatus(DeviceStatus.ONLINE.getCode());
+            deviceService.insert(device);
 
             //绑定设备到用户（插入用户设备关系表）
             UserDevice userDevice = new UserDevice();
             userDevice.setUserId(Constants.USERID);
-            userDevice.setDeviceId(did);
+            userDevice.setDeviceId(device.getId());
             userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
             userDevice.setCreateTime(new Date());
             if (userDeviceService.insert(userDevice) > 0) {
-                logger.info("绑定用户成功");
+                logger.info("设备数据变化时绑定用户成功");
             } else {
-                logger.info("绑定用户失败");
+                logger.info("设备数据变化时绑定用户失败");
             }
         }
         DevicePosition devicePosition = new DevicePosition();
@@ -234,7 +236,6 @@ public class IotServiceImpl implements IotService {
             e.printStackTrace();
         }
 //      ObjectNode paras = JsonUtil.convertObject2ObjectNode("{\"length\": 13, \"content\": \"SOS Confirmed\"}");
-
         Map<String, Object> paramCommand = new HashMap<>();
         paramCommand.put("serviceId", StringUtils.isBlank(serviceId) ? Constants.SERVICEID : serviceId);
         paramCommand.put("method", StringUtils.isBlank(method) ? Constants.METHOD.SEND_NOTICE.name() : method);

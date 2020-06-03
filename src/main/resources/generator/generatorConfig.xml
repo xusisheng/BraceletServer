@@ -178,12 +178,12 @@ rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet
 
 rm -rf /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/mapper/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/model/*
 -->
-        <table tableName="device" domainObjectName="Device"></table>
+        <table tableName="device" domainObjectName="Device"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>
 <!--        <table tableName="device_alarm_record" domainObjectName="DeviceAlarmRecord"></table>-->
-        <table tableName="device_position" domainObjectName="DevicePosition"></table>
+        <table tableName="device_position" domainObjectName="DevicePosition"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>
 <!--        <table tableName="health" domainObjsectName="Health"></table>-->
-        <table tableName="user" domainObjectName="User"></table>
-        <table tableName="user_device" domainObjectName="UserDevice"></table>
+        <table tableName="user" domainObjectName="User"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>
+        <table tableName="user_device" domainObjectName="UserDevice"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>
 
 <!--        <table tableName="userinfo" >-->
 

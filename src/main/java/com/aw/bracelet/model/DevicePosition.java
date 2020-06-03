@@ -8,6 +8,8 @@ public class DevicePosition {
 
     private Long deviceId;
 
+    private String idcode;
+
     private Long userId;
 
     private Date uptime;
@@ -68,6 +70,14 @@ public class DevicePosition {
 
     public void setDeviceId(Long deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getIdcode() {
+        return idcode;
+    }
+
+    public void setIdcode(String idcode) {
+        this.idcode = idcode == null ? null : idcode.trim();
     }
 
     public Long getUserId() {
