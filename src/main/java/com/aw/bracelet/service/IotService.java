@@ -1,5 +1,6 @@
 package com.aw.bracelet.service;
 
+import com.aw.bracelet.huawei.entity.RegBindDevice;
 import com.aw.bracelet.huawei.entity.RegDeviceAdded;
 import com.aw.bracelet.huawei.entity.RegDeviceDataChanged;
 import com.aw.bracelet.huawei.entity.RegDeviceInfoChanged;
@@ -14,6 +15,14 @@ public interface IotService {
      * @return
      */
     Boolean deviceAdded(RegDeviceAdded data);
+
+    /**
+     * 设备绑定
+     *
+     * @param data
+     * @return
+     */
+    Boolean bindDevice(RegBindDevice data);
 
     /**
      * 设备信息变化

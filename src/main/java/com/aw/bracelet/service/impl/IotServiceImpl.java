@@ -2,10 +2,7 @@ package com.aw.bracelet.service.impl;
 
 import com.aw.bracelet.constants.Constants;
 import com.aw.bracelet.entity.Coordinate;
-import com.aw.bracelet.huawei.entity.DeviceInfo;
-import com.aw.bracelet.huawei.entity.RegDeviceAdded;
-import com.aw.bracelet.huawei.entity.RegDeviceDataChanged;
-import com.aw.bracelet.huawei.entity.RegDeviceInfoChanged;
+import com.aw.bracelet.huawei.entity.*;
 import com.aw.bracelet.huawei.utils.Constant;
 import com.aw.bracelet.huawei.utils.HttpsUtil;
 import com.aw.bracelet.model.Device;
@@ -67,51 +64,83 @@ public class IotServiceImpl implements IotService {
         }
         DeviceInfo deviceInfo = data.getDeviceInfo();
         Device device = deviceService.getDeviceByIotid(iotDeviceId);
-        if (device == null) {
-            //新增加设备
-            logger.info("设备：{} 不存在，新增该设备", iotDeviceId);
-            device = new Device();
-            try {
-                BeanUtils.copyProperties(device, deviceInfo);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            device.setIotDeviceid(iotDeviceId);
-            device.setIdcode(deviceInfo.getNodeId());
-            device.setMac(deviceInfo.getMac());
-            device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
-            device.setCreateTime(new Date());
-            deviceService.insert(device);
+        if (device != null) {
+            logger.info("设备：{} 已存在。", iotDeviceId);
+            return true;
+        }
+        //新增加设备
+        logger.info("设备：{} 不存在，新增该设备", iotDeviceId);
+        device = new Device();
+        try {
+            BeanUtils.copyProperties(device, deviceInfo);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        device.setIotDeviceid(iotDeviceId);
+        device.setIdcode(deviceInfo.getNodeId());
+        device.setSn(deviceInfo.getNodeId());
+        device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
+        device.setCreateTime(new Date());
+        deviceService.insert(device);
 
-            //绑定设备到用户（插入用户设备关系表）
-            UserDevice userDevice = new UserDevice();
-            userDevice.setUserId(Constants.USERID);
-            userDevice.setDeviceId(device.getId());
-            userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
-            userDevice.setCreateTime(new Date());
-            if (userDeviceService.insert(userDevice) > 0) {
-                logger.info("添加设备时绑定用户成功");
-            } else {
-                logger.info("添加设备时绑定用户失败");
-            }
+        //绑定设备到用户（插入用户设备关系表）
+        UserDevice userDevice = new UserDevice();
+        userDevice.setUserId(Constants.USERID);
+        userDevice.setDeviceId(device.getId());
+        userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
+        userDevice.setCreateTime(new Date());
+        if (userDeviceService.insert(userDevice) > 0) {
+            logger.info("添加设备时绑定用户成功");
         } else {
-            //更新设备信息
-            try {
-                BeanUtils.copyProperties(device, deviceInfo);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            device.setIotDeviceid(iotDeviceId);
-            device.setIdcode(deviceInfo.getNodeId());
-            device.setMac(deviceInfo.getMac());
-            device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
-            deviceService.updateByPrimaryKeySelective(device);
+            logger.info("添加设备时绑定用户失败");
         }
         return true;
+    }
+
+    @Override
+    public Boolean bindDevice(RegBindDevice data) {
+        //检查通知类型
+        if (!data.getNotifyType().equalsIgnoreCase("bindDevice")) {
+            logger.warn("设备绑定时通知类型错误!!!");
+            return true;
+        }
+        if (!data.getResultCode().equalsIgnoreCase("succeeded")) {
+            logger.warn("设备绑定失败！");
+            return true;
+        }
+        String iotDeviceId = data.getDeviceId();
+        DeviceInfo deviceInfo = data.getDeviceInfo();
+        Device device = deviceService.getDeviceByIotid(iotDeviceId);
+        for (int i = 0; i < 3; i++) {
+            if (device == null) {
+                try {
+                    logger.info("sleep 500");
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                device = deviceService.getDeviceByIotid(iotDeviceId);
+                continue;
+            }
+            logger.info("设备绑定时设备：{} 不存在！", iotDeviceId);
+            return true;
+        }
+
+        //更新设备信息
+        try {
+            BeanUtils.copyProperties(device, deviceInfo);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        device.setIdcode(deviceInfo.getNodeId());
+        device.setSn(deviceInfo.getNodeId());
+        device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
+        deviceService.updateByPrimaryKeySelective(device);
+        return null;
     }
 
     @Override
@@ -124,50 +153,36 @@ public class IotServiceImpl implements IotService {
         String iotDeviceId = data.getDeviceId();
         DeviceInfo deviceInfo = data.getDeviceInfo();
         Device device = deviceService.getDeviceByIotid(iotDeviceId);
-        if (device == null) {
-            //新增加设备
-            logger.info("设备信息变更时设备：{} 不存在，新增该设备", iotDeviceId);
-            device = new Device();
+        for (int i = 0; i < 3; i++) {
+            logger.info("i: {}", i);
+            if (device != null) {
+                break;
+            }
             try {
-                BeanUtils.copyProperties(device, deviceInfo);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-            device.setIotDeviceid(iotDeviceId);
-            device.setIdcode(deviceInfo.getNodeId());
-            device.setMac(deviceInfo.getMac());
-            device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
-            device.setCreateTime(new Date());
-            deviceService.insert(device);
-
-            //绑定设备到用户（插入用户设备关系表）
-            UserDevice userDevice = new UserDevice();
-            userDevice.setUserId(Constants.USERID);
-            userDevice.setDeviceId(device.getId());
-            userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
-            userDevice.setCreateTime(new Date());
-            if (userDeviceService.insert(userDevice) > 0) {
-                logger.info("设备信息变更时绑定用户成功");
-            } else {
-                logger.info("设备信息变更时绑定用户失败");
-            }
-        } else {
-            //更新设备信息
-            try {
-                BeanUtils.copyProperties(device, deviceInfo);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
+                logger.info("sleep 500");
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            device.setIotDeviceid(iotDeviceId);
-            device.setIdcode(deviceInfo.getNodeId());
-            device.setMac(deviceInfo.getMac());
-            device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
-            deviceService.updateByPrimaryKeySelective(device);
+            device = deviceService.getDeviceByIotid(iotDeviceId);
         }
+        if (device == null) {
+            logger.info("设备信息变更时设备：{} 不存在，忽略该数据", iotDeviceId);
+            return true;
+        }
+
+        //更新设备信息
+        try {
+            BeanUtils.copyProperties(device, deviceInfo);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        device.setIdcode(deviceInfo.getNodeId());
+        device.setSn(deviceInfo.getNodeId());
+        device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
+        deviceService.updateByPrimaryKeySelective(device);
         return true;
     }
 
@@ -183,30 +198,12 @@ public class IotServiceImpl implements IotService {
         Device device = deviceService.getDeviceByIotid(iotDeviceId);
         ObjectNode on = data.getService().getData();
         if (device == null) {
-            logger.info("设备数据变化时设备：{} 不存在，新增该设备", iotDeviceId);
-            device = new Device();
-            device.setIdcode(on.get("DeviceID").asText());
-            device.setIotDeviceid(iotDeviceId);
-            device.setImei(on.get("IMEI").asText());
-            device.setSn(on.get("DeviceID").asText());
-            device.setCreateTime(new Date());
-            device.setStatus(DeviceStatus.ONLINE.getCode());
-            deviceService.insert(device);
-
-            //绑定设备到用户（插入用户设备关系表）
-            UserDevice userDevice = new UserDevice();
-            userDevice.setUserId(Constants.USERID);
-            userDevice.setDeviceId(device.getId());
-            userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
-            userDevice.setCreateTime(new Date());
-            if (userDeviceService.insert(userDevice) > 0) {
-                logger.info("设备数据变化时绑定用户成功");
-            } else {
-                logger.info("设备数据变化时绑定用户失败");
-            }
+            logger.info("设备数据变化时设备：{} 不存在，忽略该数据", iotDeviceId);
+            return true;
         }
         DevicePosition devicePosition = new DevicePosition();
         devicePosition.setDeviceId(device.getId());
+        devicePosition.setIdcode(on.get("DeviceID").asText());
         devicePosition.setUserId(Constants.USERID);
         //UTC时间，减8小时才是东八区时间
         Date upTime = DateUtils.addHours(DateUtil.getDateFromString(on.get("DeviceTime").asText()), -8);

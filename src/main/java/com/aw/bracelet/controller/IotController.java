@@ -35,15 +35,12 @@ public class IotController {
     public ResponseEntity<HttpStatus> deviceAdded(HttpServletRequest request, HttpServletResponse response) {
         String strNotify = "添加新设备";
         try {
-//            设备名称 xuss
-//            设备ID f1dd19bb-79d5-4be6-9f59-586e2e8fc1b3
-//            PSK码 （使用DTLS协议时需要使用到该PSK码，请您牢记！） 363b4fd1d01bc364a97064bfe3e336be
             //添加新设备: {"notifyType":"deviceAdded","deviceId":"f1dd19bb-79d5-4be6-9f59-586e2e8fc1b3","gatewayId":"f1dd19bb-79d5-4be6-9f59-586e2e8fc1b3","nodeType":"GATEWAY","deviceInfo":{"nodeId":"DA:9B:4F:F1:D0:83","name":null,"description":null,"manufacturerId":null,"manufacturerName":null,"mac":null,"location":null,"deviceType":null,"model":null,"swVersion":null,"fwVersion":null,"hwVersion":null,"protocolType":null,"bridgeId":null,"status":"OFFLINE","statusDetail":"NOT_ACTIVE","mute":null,"supportedSecurity":null,"isSecurity":null,"signalStrength":null,"sigVersion":null,"serialNumber":null,"batteryLevel":null,"isHD":null}}
             InputStream is = request.getInputStream();
             String req_str = IOUtils.toString(is, Constants.CHARSET.UTF8);
-            iotService.deviceAdded(JsonMapper.toObject(req_str, RegDeviceAdded.class));
             is.close();
             logger.info("{}: {}", strNotify, req_str);
+            iotService.deviceAdded(JsonMapper.toObject(req_str, RegDeviceAdded.class));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IOException e) {
             logger.warn("{}: {}", strNotify, e.getMessage());
