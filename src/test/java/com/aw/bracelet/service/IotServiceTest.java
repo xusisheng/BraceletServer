@@ -3,7 +3,11 @@ package com.aw.bracelet.service;
 import com.aw.bracelet.BraceletApplication;
 import com.aw.bracelet.constants.Constants;
 import com.aw.bracelet.huawei.entity.RegDeviceAdded;
+import com.aw.bracelet.huawei.entity.RegDeviceDataChanged;
+import com.aw.bracelet.huawei.entity.RegDeviceInfoChanged;
+import com.aw.bracelet.model.Device;
 import com.aw.bracelet.utils.JsonMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -30,18 +34,29 @@ public class IotServiceTest {
     }
 
     @Test
+    public void deviceInfoChanged() {
+        req_str = "{\"notifyType\":\"deviceInfoChanged\",\"deviceId\":\"fca3cd5f-c303-461e-b55b-2b218fe735fa\",\"gatewayId\":\"fca3cd5f-c303-461e-b55b-2b218fe735fa\",\"networkStatus\":null,\"deviceInfo\":{\"nodeId\":null,\"name\":\"xuss\",\"description\":null,\"manufacturerId\":\"eefbbff1f59f4fc18fdfa67d650d3d56\",\"manufacturerName\":\"STAR-IoT\",\"mac\":null,\"location\":\"Shenzhen\",\"deviceType\":\"Motion\",\"model\":\"NBWatch_OTA\",\"swVersion\":null,\"fwVersion\":null,\"hwVersion\":null,\"protocolType\":\"CoAP\",\"bridgeId\":null,\"status\":null,\"statusDetail\":null,\"mute\":\"FALSE\",\"supportedSecurity\":null,\"isSecurity\":null,\"signalStrength\":null,\"sigVersion\":null,\"serialNumber\":null,\"batteryLevel\":null,\"isHD\":null}}";
+        RegDeviceInfoChanged data = JsonMapper.toObject(req_str, RegDeviceInfoChanged.class);
+        iotService.deviceInfoChanged(data);
+        System.out.println("OK");
+    }
+
+    @Test
     public void deviceDataChanged() {
         req_str = "{\"notifyType\":\"deviceDataChanged\",\"deviceId\":\"98525533-0588-4000-b2c2-11d800a2d328\",\"gatewayId\":\"98525533-0588-4000-b2c2-11d800a2d328\",\"requestId\":null,\"service\":{\"serviceId\":\"NBWatch\",\"serviceType\":\"NBWatch\",\"data\":{\"MessageType\":\"DEVSOS\",\"DeviceID\":\"862177041313472\",\"Location\":\"E110.308205 N025.262453\",\"HeartRate\":\"000\",\"Elevation\":\"+27990\",\"Atmosphere\":\"982.15\",\"Battery\":\"100\",\"DeviceTime\":\"2020-05-27 16:54:34\",\"IMEI\":\"460113004305950\",\"Temperature\":\"+270.0\",\"Steps\":\"000000\"},\"eventTime\":\"20200527T085437Z\"}}";
-//        RegDeviceDataChanged data = JsonMapper.toObject(req_str, RegDeviceDataChanged.class);
-//        ObjectNode on = data.getService().getData();
+        req_str = "{\"notifyType\":\"deviceDataChanged\",\"requestId\":\"6c3c60f0-f1cb-d23f-bbf7-46152a726aea_9362\",\"deviceId\":\"01006f25-ab60-4a7e-8b0a-6dcfa15e43cc\",\"gatewayId\":\"0010256458\",\"service\":{\"serviceType\":\"Brightness\",\"data\":{\"brightness\":80},\"eventTime\":\"20170311T163657Z\",\"serviceId\":\"Brightness\"}}";
+        RegDeviceDataChanged data = JsonMapper.toObject(req_str, RegDeviceDataChanged.class);
+        ObjectNode on = data.getService().getData();
 //        String gps = on.get("Location").textValue();
 //        Coordinate coordinate = new Coordinate(gps);
-//        String sss = on.get("Atmosphere").textValue();
-//        String www = on.get("Atmosphere").asText();
-//        Integer ii = on.get("Battery").asInt();
-//        Integer jj = on.get("Battery").intValue();  // wrong
+        String sss = on.get("DeviceID").textValue();
+        String www = on.get("DeviceID").asText();
+        Integer ii = on.get("Battery").asInt();
+        Integer jj = on.get("Battery").intValue();  // wrong
 //        System.out.println(on.get("MessageType").asText());
-//        iotService.deviceDataChanged(data);
+        Device device = new Device();
+        device.setIdcode(on.get("DeviceID").asText());
+        iotService.deviceDataChanged(data);
 //        StateEnum e1 = EnumHelperUtil.indexOf(StateEnum.class, 0);
 //        StateEnum e2 = EnumHelperUtil.nameOf(StateEnum.class, "USER_NOT_EXIST");
 //        StateEnum e3 = EnumHelperUtil.getByStringTypeCode(StateEnum.class, "getDesc", "用户不存在");

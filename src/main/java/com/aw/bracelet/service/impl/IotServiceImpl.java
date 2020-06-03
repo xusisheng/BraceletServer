@@ -73,8 +73,21 @@ public class IotServiceImpl implements IotService {
             device.setMac(StringUtils.isBlank(deviceInfo.getMac()) ? deviceInfo.getNodeId() : deviceInfo.getMac());
             DeviceStatus deviceStatus = EnumHelperUtil.getByStringTypeCode(Constants.DeviceStatus.class, "getValue", deviceInfo.getStatus());
             device.setStatus(deviceStatus.getCode());
+            device.setCreateTime(new Date());
             did = deviceService.insert(device);
             device.setId((long)did);
+
+            //绑定设备到用户（插入用户设备关系表）
+            UserDevice userDevice = new UserDevice();
+            userDevice.setUserId(Constants.USERID);
+            userDevice.setDeviceId(did);
+            userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
+            userDevice.setCreateTime(new Date());
+            if (userDeviceService.insert(userDevice) > 0) {
+                logger.info("绑定用户成功");
+            } else {
+                logger.info("绑定用户失败");
+            }
         } else {
             //更新设备信息
             try {
@@ -116,10 +129,28 @@ public class IotServiceImpl implements IotService {
             }
             device.setIotDeviceid(iotDeviceId);
             device.setMac(StringUtils.isBlank(deviceInfo.getMac()) ? deviceInfo.getNodeId() : deviceInfo.getMac());
-            DeviceStatus deviceStatus = EnumHelperUtil.getByStringTypeCode(Constants.DeviceStatus.class, "getValue", deviceInfo.getStatus());
+            DeviceStatus deviceStatus = DeviceStatus.OFFLINE;
+            try {
+                deviceStatus = EnumHelperUtil.getByStringTypeCode(Constants.DeviceStatus.class, "getValue", deviceInfo.getStatus());
+            } catch (Exception e) {
+                logger.warn("设备状态不合法！");
+            }
             device.setStatus(deviceStatus.getCode());
+            device.setCreateTime(new Date());
             did = deviceService.insert(device);
             device.setId((long)did);
+
+            //绑定设备到用户（插入用户设备关系表）
+            UserDevice userDevice = new UserDevice();
+            userDevice.setUserId(Constants.USERID);
+            userDevice.setDeviceId(did);
+            userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
+            userDevice.setCreateTime(new Date());
+            if (userDeviceService.insert(userDevice) > 0) {
+                logger.info("绑定用户成功");
+            } else {
+                logger.info("绑定用户失败");
+            }
         } else {
             //更新设备信息
             try {
@@ -156,6 +187,7 @@ public class IotServiceImpl implements IotService {
             device.setIotDeviceid(iotDeviceId);
             device.setImei(on.get("IMEI").asText());
             device.setSn(on.get("DeviceID").asText());
+            device.setCreateTime(new Date());
             long did = deviceService.insert(device);
             device.setId((long)did);
 
@@ -164,6 +196,7 @@ public class IotServiceImpl implements IotService {
             userDevice.setUserId(Constants.USERID);
             userDevice.setDeviceId(did);
             userDevice.setStatus(Constants.USERDEVICESTATUS.BIND);
+            userDevice.setCreateTime(new Date());
             if (userDeviceService.insert(userDevice) > 0) {
                 logger.info("绑定用户成功");
             } else {
@@ -187,6 +220,7 @@ public class IotServiceImpl implements IotService {
         devicePosition.setTemperature(on.get("Temperature").asDouble());
         devicePosition.setSteps(on.get("Steps").asInt());
         devicePosition.setOnlineStatus(true);
+        devicePosition.setCreateTime(new Date());
         devicePositionService.insert(devicePosition);
         return true;
     }

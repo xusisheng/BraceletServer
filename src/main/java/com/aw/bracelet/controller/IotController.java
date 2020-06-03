@@ -3,6 +3,7 @@ package com.aw.bracelet.controller;
 import com.aw.bracelet.constants.Constants;
 import com.aw.bracelet.huawei.entity.RegDeviceAdded;
 import com.aw.bracelet.huawei.entity.RegDeviceDataChanged;
+import com.aw.bracelet.huawei.entity.RegDeviceInfoChanged;
 import com.aw.bracelet.service.IotService;
 import com.aw.bracelet.utils.JsonMapper;
 import org.apache.commons.io.IOUtils;
@@ -76,6 +77,7 @@ public class IotController {
             String req_str = IOUtils.toString(is, Constants.CHARSET.UTF8);
             is.close();
             logger.info("{}: {}", strNotify, req_str);
+            iotService.deviceInfoChanged(JsonMapper.toObject(req_str, RegDeviceInfoChanged.class));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IOException e) {
             logger.warn("{}: {}", strNotify, e.getMessage());
