@@ -80,7 +80,6 @@ public class IotServiceImpl implements IotService {
         }
         device.setIotDeviceid(iotDeviceId);
         device.setIdcode(deviceInfo.getNodeId());
-        device.setSn(deviceInfo.getNodeId());
         device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
         device.setCreateTime(new Date());
         deviceService.insert(device);
@@ -137,7 +136,6 @@ public class IotServiceImpl implements IotService {
             e.printStackTrace();
         }
         device.setIdcode(deviceInfo.getNodeId());
-        device.setSn(deviceInfo.getNodeId());
         device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
         deviceService.updateByPrimaryKeySelective(device);
         return null;
@@ -180,7 +178,6 @@ public class IotServiceImpl implements IotService {
             e.printStackTrace();
         }
         device.setIdcode(deviceInfo.getNodeId());
-        device.setSn(deviceInfo.getNodeId());
         device.setStatus(getDeviceStatus(deviceInfo.getStatus()).getCode());
         deviceService.updateByPrimaryKeySelective(device);
         return true;
@@ -194,9 +191,17 @@ public class IotServiceImpl implements IotService {
             return true;
         }
         //检查设备
+        Boolean bUpdateDevice = false;
         String iotDeviceId = data.getDeviceId();
-        Device device = deviceService.getDeviceByIotid(iotDeviceId);
         ObjectNode on = data.getService().getData();
+        Device device = deviceService.getDeviceByIotid(iotDeviceId);
+        if (device == null) {
+            //测试阶段，依据idcode再查询一次设备
+            if (on.get("DeviceID") != null) {
+                bUpdateDevice = true;
+                device = deviceService.getDeviceByIdcode(on.get("DeviceID").asText());
+            }
+        }
         if (device == null) {
             logger.info("设备数据变化时设备：{} 不存在，忽略该数据", iotDeviceId);
             return true;
@@ -221,6 +226,16 @@ public class IotServiceImpl implements IotService {
         devicePosition.setOnlineStatus(true);
         devicePosition.setCreateTime(new Date());
         devicePositionService.insert(devicePosition);
+
+        //更新设备在线状态
+        if (bUpdateDevice || (device.getStatus() != DeviceStatus.ONLINE.getCode())) {
+            device.setIotDeviceid(iotDeviceId);
+            device.setIdcode(on.get("DeviceID").asText());
+            device.setImei(on.get("IMEI").asText());
+            device.setStatus(DeviceStatus.ONLINE.getCode());
+            deviceService.updateByPrimaryKeySelective(device);
+        }
+
         return true;
     }
 

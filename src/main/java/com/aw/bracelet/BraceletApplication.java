@@ -16,11 +16,11 @@ public class BraceletApplication {
         SpringApplication.run(BraceletApplication.class, args);
 
         System.out.println("Start....");
-        JSONObject jsonObject = new JSONObject();
-        JSONArray ja = new JSONArray();
-        ja.add(10000);
-        ja.add(10001);
-        System.out.println(ja);
+//        JSONObject jsonObject = new JSONObject();
+//        JSONArray ja = new JSONArray();
+//        ja.add(10000);
+//        ja.add(10001);
+//        System.out.println(ja);
         System.out.println("End.");
     }
 

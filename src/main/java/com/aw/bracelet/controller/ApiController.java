@@ -3,7 +3,6 @@ package com.aw.bracelet.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aw.bracelet.constants.Constants;
-import com.aw.bracelet.constants.Constants.*;
 import com.aw.bracelet.entity.*;
 import com.aw.bracelet.enums.CommandEnum;
 import com.aw.bracelet.enums.StateEnum;
@@ -11,7 +10,6 @@ import com.aw.bracelet.model.Device;
 import com.aw.bracelet.model.DevicePosition;
 import com.aw.bracelet.service.*;
 import com.aw.bracelet.utils.DateUtil;
-import com.aw.bracelet.utils.EnumHelperUtil;
 import com.aw.bracelet.utils.JsonMapper;
 import com.aw.bracelet.utils.JsonUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -46,8 +44,6 @@ public class ApiController {
     private IotService iotService;
     @Autowired
     private DeviceService deviceService;
-    @Autowired
-    private UserDeviceService userDeviceService;
     @Autowired
     private DevicePositionService devicePositionService;
 
@@ -331,9 +327,18 @@ public class ApiController {
         String str = bangId + "_" + time + "_dhcc";
         String sign = DigestUtils.md5DigestAsHex(str.getBytes());
         if (StringUtils.equals(sign, sing)) {
-            return UnifyResponse.success();
-        } else {
-            return UnifyResponse.failed();
+            try {
+                Device device = deviceService.getDeviceBySn(bangId);
+                if (device != null) {
+                    ObjectNode paras = JsonUtil.convertObject2ObjectNode("{\"length\": 13, \"content\": \"SOS Confirmed\"}");
+                    iotService.deviceCommonds(device.getSn(), Constants.SERVICEID, Constants.METHOD.SEND_NOTICE.name(), paras);
+                    return UnifyResponse.success();
+                }
+                return UnifyResponse.success("该设备不存在");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        return UnifyResponse.failed();
     }
 }

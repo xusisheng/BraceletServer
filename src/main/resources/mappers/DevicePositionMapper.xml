@@ -4,8 +4,9 @@
   <resultMap id="BaseResultMap" type="com.aw.bracelet.model.DevicePosition">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="device_id" jdbcType="BIGINT" property="deviceId" />
-    <result column="idcode" jdbcType="VARCHAR" property="idcode" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="idcode" jdbcType="VARCHAR" property="idcode" />
+    <result column="imei" jdbcType="VARCHAR" property="imei" />
     <result column="uptime" jdbcType="TIMESTAMP" property="uptime" />
     <result column="message_type" jdbcType="VARCHAR" property="messageType" />
     <result column="locate_mode" jdbcType="INTEGER" property="locateMode" />
@@ -88,9 +89,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, device_id, idcode, user_id, uptime, message_type, locate_mode, longitude, latitude, 
-    altitude, atmosphere, battery, heart_beat, disastolic, shrink, blood_pressure, blood_sugar, 
-    temperature, steps, deep_sleep, light_sleep, roll, wake, quality, online_status, 
+    id, device_id, user_id, idcode, imei, uptime, message_type, locate_mode, longitude, 
+    latitude, altitude, atmosphere, battery, heart_beat, disastolic, shrink, blood_pressure, 
+    blood_sugar, temperature, steps, deep_sleep, light_sleep, roll, wake, quality, online_status, 
     create_time
   </sql>
   <select id="selectByExample" parameterType="com.aw.bracelet.model.DevicePositionExample" resultMap="BaseResultMap">
@@ -127,24 +128,24 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into device_position (device_id, idcode, user_id, 
-      uptime, message_type, locate_mode, 
-      longitude, latitude, altitude, 
-      atmosphere, battery, heart_beat, 
-      disastolic, shrink, blood_pressure, 
-      blood_sugar, temperature, steps, 
-      deep_sleep, light_sleep, roll, 
-      wake, quality, online_status, 
-      create_time)
-    values (#{deviceId,jdbcType=BIGINT}, #{idcode,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
-      #{uptime,jdbcType=TIMESTAMP}, #{messageType,jdbcType=VARCHAR}, #{locateMode,jdbcType=INTEGER}, 
-      #{longitude,jdbcType=DECIMAL}, #{latitude,jdbcType=DECIMAL}, #{altitude,jdbcType=DECIMAL}, 
-      #{atmosphere,jdbcType=DECIMAL}, #{battery,jdbcType=INTEGER}, #{heartBeat,jdbcType=INTEGER}, 
-      #{disastolic,jdbcType=DOUBLE}, #{shrink,jdbcType=DOUBLE}, #{bloodPressure,jdbcType=DOUBLE}, 
-      #{bloodSugar,jdbcType=DOUBLE}, #{temperature,jdbcType=DOUBLE}, #{steps,jdbcType=INTEGER}, 
-      #{deepSleep,jdbcType=INTEGER}, #{lightSleep,jdbcType=INTEGER}, #{roll,jdbcType=INTEGER}, 
-      #{wake,jdbcType=INTEGER}, #{quality,jdbcType=INTEGER}, #{onlineStatus,jdbcType=BIT}, 
-      #{createTime,jdbcType=TIMESTAMP})
+    insert into device_position (device_id, user_id, idcode, 
+      imei, uptime, message_type, 
+      locate_mode, longitude, latitude, 
+      altitude, atmosphere, battery, 
+      heart_beat, disastolic, shrink, 
+      blood_pressure, blood_sugar, temperature, 
+      steps, deep_sleep, light_sleep, 
+      roll, wake, quality, 
+      online_status, create_time)
+    values (#{deviceId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{idcode,jdbcType=VARCHAR}, 
+      #{imei,jdbcType=VARCHAR}, #{uptime,jdbcType=TIMESTAMP}, #{messageType,jdbcType=VARCHAR}, 
+      #{locateMode,jdbcType=INTEGER}, #{longitude,jdbcType=DECIMAL}, #{latitude,jdbcType=DECIMAL}, 
+      #{altitude,jdbcType=DECIMAL}, #{atmosphere,jdbcType=DECIMAL}, #{battery,jdbcType=INTEGER}, 
+      #{heartBeat,jdbcType=INTEGER}, #{disastolic,jdbcType=DOUBLE}, #{shrink,jdbcType=DOUBLE}, 
+      #{bloodPressure,jdbcType=DOUBLE}, #{bloodSugar,jdbcType=DOUBLE}, #{temperature,jdbcType=DOUBLE}, 
+      #{steps,jdbcType=INTEGER}, #{deepSleep,jdbcType=INTEGER}, #{lightSleep,jdbcType=INTEGER}, 
+      #{roll,jdbcType=INTEGER}, #{wake,jdbcType=INTEGER}, #{quality,jdbcType=INTEGER}, 
+      #{onlineStatus,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.aw.bracelet.model.DevicePosition">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -155,11 +156,14 @@
       <if test="deviceId != null">
         device_id,
       </if>
+      <if test="userId != null">
+        user_id,
+      </if>
       <if test="idcode != null">
         idcode,
       </if>
-      <if test="userId != null">
-        user_id,
+      <if test="imei != null">
+        imei,
       </if>
       <if test="uptime != null">
         uptime,
@@ -232,11 +236,14 @@
       <if test="deviceId != null">
         #{deviceId,jdbcType=BIGINT},
       </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
       <if test="idcode != null">
         #{idcode,jdbcType=VARCHAR},
       </if>
-      <if test="userId != null">
-        #{userId,jdbcType=BIGINT},
+      <if test="imei != null">
+        #{imei,jdbcType=VARCHAR},
       </if>
       <if test="uptime != null">
         #{uptime,jdbcType=TIMESTAMP},
@@ -321,11 +328,14 @@
       <if test="record.deviceId != null">
         device_id = #{record.deviceId,jdbcType=BIGINT},
       </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
       <if test="record.idcode != null">
         idcode = #{record.idcode,jdbcType=VARCHAR},
       </if>
-      <if test="record.userId != null">
-        user_id = #{record.userId,jdbcType=BIGINT},
+      <if test="record.imei != null">
+        imei = #{record.imei,jdbcType=VARCHAR},
       </if>
       <if test="record.uptime != null">
         uptime = #{record.uptime,jdbcType=TIMESTAMP},
@@ -402,8 +412,9 @@
     update device_position
     set id = #{record.id,jdbcType=BIGINT},
       device_id = #{record.deviceId,jdbcType=BIGINT},
-      idcode = #{record.idcode,jdbcType=VARCHAR},
       user_id = #{record.userId,jdbcType=BIGINT},
+      idcode = #{record.idcode,jdbcType=VARCHAR},
+      imei = #{record.imei,jdbcType=VARCHAR},
       uptime = #{record.uptime,jdbcType=TIMESTAMP},
       message_type = #{record.messageType,jdbcType=VARCHAR},
       locate_mode = #{record.locateMode,jdbcType=INTEGER},
@@ -436,11 +447,14 @@
       <if test="deviceId != null">
         device_id = #{deviceId,jdbcType=BIGINT},
       </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
       <if test="idcode != null">
         idcode = #{idcode,jdbcType=VARCHAR},
       </if>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=BIGINT},
+      <if test="imei != null">
+        imei = #{imei,jdbcType=VARCHAR},
       </if>
       <if test="uptime != null">
         uptime = #{uptime,jdbcType=TIMESTAMP},
@@ -514,8 +528,9 @@
   <update id="updateByPrimaryKey" parameterType="com.aw.bracelet.model.DevicePosition">
     update device_position
     set device_id = #{deviceId,jdbcType=BIGINT},
-      idcode = #{idcode,jdbcType=VARCHAR},
       user_id = #{userId,jdbcType=BIGINT},
+      idcode = #{idcode,jdbcType=VARCHAR},
+      imei = #{imei,jdbcType=VARCHAR},
       uptime = #{uptime,jdbcType=TIMESTAMP},
       message_type = #{messageType,jdbcType=VARCHAR},
       locate_mode = #{locateMode,jdbcType=INTEGER},

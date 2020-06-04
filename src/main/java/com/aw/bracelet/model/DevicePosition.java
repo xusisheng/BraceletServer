@@ -8,9 +8,11 @@ public class DevicePosition {
 
     private Long deviceId;
 
+    private Long userId;
+
     private String idcode;
 
-    private Long userId;
+    private String imei;
 
     private Date uptime;
 
@@ -72,6 +74,14 @@ public class DevicePosition {
         this.deviceId = deviceId;
     }
 
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public String getIdcode() {
         return idcode;
     }
@@ -80,12 +90,12 @@ public class DevicePosition {
         this.idcode = idcode == null ? null : idcode.trim();
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getImei() {
+        return imei;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setImei(String imei) {
+        this.imei = imei == null ? null : imei.trim();
     }
 
     public Date getUptime() {

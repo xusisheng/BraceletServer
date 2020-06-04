@@ -55,7 +55,7 @@
 
         <!--数据库链接URL，用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost/bracelet?nullCatalogMeansCurrent=true"
+                        connectionURL="jdbc:mysql://119.45.43.67:3306/bracelet?nullCatalogMeansCurrent=true"
                         userId="root"
                         password="canada">
         </jdbcConnection>
@@ -178,12 +178,12 @@ rm -f /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet
 
 rm -rf /Users/xusisheng/workspace-aw/BraceletServer/src/main/resources/mappers/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/mapper/* /Users/xusisheng/workspace-aw/BraceletServer/src/main/java/com/aw/bracelet/model/*
 -->
-        <table tableName="device" domainObjectName="Device"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>
+<!--        <table tableName="device" domainObjectName="Device"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>-->
 <!--        <table tableName="device_alarm_record" domainObjectName="DeviceAlarmRecord"></table>-->
         <table tableName="device_position" domainObjectName="DevicePosition"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>
 <!--        <table tableName="health" domainObjsectName="Health"></table>-->
-        <table tableName="user" domainObjectName="User"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>
-        <table tableName="user_device" domainObjectName="UserDevice"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>
+<!--        <table tableName="user" domainObjectName="User"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>-->
+<!--        <table tableName="user_device" domainObjectName="UserDevice"><generatedKey column="id" sqlStatement="Mysql" identity="true"/></table>-->
 
 <!--        <table tableName="userinfo" >-->
 
