@@ -22,9 +22,9 @@ public class WebConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor1())
-                .addPathPatterns("/**")
-                .excludePathPatterns("/iot/**", "/api/ExceptionMessage/**", "/error");
+//        registry.addInterceptor(loginInterceptor1())
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/iot/**", "/api/ExceptionMessage/**", "/error");
     }
 
     @Bean

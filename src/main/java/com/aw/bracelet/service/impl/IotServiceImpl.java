@@ -228,7 +228,7 @@ public class IotServiceImpl implements IotService {
         devicePositionService.insert(devicePosition);
 
         //更新设备在线状态
-        if (bUpdateDevice || (device.getStatus() != DeviceStatus.ONLINE.getCode())) {
+        if (bUpdateDevice || (device.getStatus() == null) || (device.getStatus() != DeviceStatus.ONLINE.getCode())) {
             device.setIotDeviceid(iotDeviceId);
             device.setIdcode(on.get("DeviceID").asText());
             device.setImei(on.get("IMEI").asText());

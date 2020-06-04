@@ -60,8 +60,8 @@ public class IotServiceTest {
 
     @Test
     public void deviceDataChanged() {
-        req_str = "{\"notifyType\":\"deviceDataChanged\",\"deviceId\":\"98525533-0588-4000-b2c2-11d800a2d328\",\"gatewayId\":\"98525533-0588-4000-b2c2-11d800a2d328\",\"requestId\":null,\"service\":{\"serviceId\":\"NBWatch\",\"serviceType\":\"NBWatch\",\"data\":{\"MessageType\":\"DEVSOS\",\"DeviceID\":\"862177041313472\",\"Location\":\"E110.308205 N025.262453\",\"HeartRate\":\"000\",\"Elevation\":\"+27990\",\"Atmosphere\":\"982.15\",\"Battery\":\"100\",\"DeviceTime\":\"2020-05-27 16:54:34\",\"IMEI\":\"460113004305950\",\"Temperature\":\"+270.0\",\"Steps\":\"000000\"},\"eventTime\":\"20200527T085437Z\"}}";
-        req_str = "{\"notifyType\":\"deviceDataChanged\",\"requestId\":\"6c3c60f0-f1cb-d23f-bbf7-46152a726aea_9362\",\"deviceId\":\"01006f25-ab60-4a7e-8b0a-6dcfa15e43cc\",\"gatewayId\":\"0010256458\",\"service\":{\"serviceType\":\"Brightness\",\"data\":{\"brightness\":80},\"eventTime\":\"20170311T163657Z\",\"serviceId\":\"Brightness\"}}";
+//        req_str = "{\"notifyType\":\"deviceDataChanged\",\"deviceId\":\"98525533-0588-4000-b2c2-11d800a2d328\",\"gatewayId\":\"98525533-0588-4000-b2c2-11d800a2d328\",\"requestId\":null,\"service\":{\"serviceId\":\"NBWatch\",\"serviceType\":\"NBWatch\",\"data\":{\"MessageType\":\"DEVSOS\",\"DeviceID\":\"862177041313472\",\"Location\":\"E110.308205 N025.262453\",\"HeartRate\":\"000\",\"Elevation\":\"+27990\",\"Atmosphere\":\"982.15\",\"Battery\":\"100\",\"DeviceTime\":\"2020-05-27 16:54:34\",\"IMEI\":\"460113004305950\",\"Temperature\":\"+270.0\",\"Steps\":\"000000\"},\"eventTime\":\"20200527T085437Z\"}}";
+        req_str = "{\"notifyType\":\"deviceDataChanged\",\"deviceId\":\"4955fab4-11e1-440a-822b-15a229013d16\",\"gatewayId\":\"4955fab4-11e1-440a-822b-15a229013d16\",\"requestId\":null,\"service\":{\"serviceId\":\"NBWatch\",\"serviceType\":\"NBWatch\",\"data\":{\"MessageType\":\"UPLOAD\",\"DeviceID\":\"862177041313308\",\"Location\":\"E110.308235 N025.262451\",\"HeartRate\":\"000\",\"Elevation\":\"+00314\",\"Atmosphere\":\"978.34\",\"Battery\":\"060\",\"DeviceTime\":\"2020-06-04 14:39:36\",\"IMEI\":\"460113004304696\",\"Temperature\":\"+41.20\",\"Steps\":\"000017\"},\"eventTime\":\"20200604T063939Z\"}}";
         RegDeviceDataChanged data = JsonMapper.toObject(req_str, RegDeviceDataChanged.class);
         ObjectNode on = data.getService().getData();
 //        String gps = on.get("Location").textValue();
@@ -90,6 +90,7 @@ public class IotServiceTest {
     }
 
     @Test
-    public void createDeviceCommandDemo() {
+    public void createDeviceCommandDemo() throws Exception {
+        iotService.CreateDeviceCommandDemo();
     }
 }

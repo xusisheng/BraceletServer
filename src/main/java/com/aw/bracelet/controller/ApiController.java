@@ -63,6 +63,7 @@ public class ApiController {
     @PostMapping("/shouhuan_getList")
     @ResponseBody
     public RespGetList getList(@RequestBody UnifyRequest<ReqGetList> request) throws Exception {
+        logger.info("手环历史轨迹查询....");
         JSONArray ja = request.getParams().getIdlist();
         String startTime = request.getParams().getBegin_time();
         String endTime = request.getParams().getEnd_time();
@@ -120,6 +121,7 @@ public class ApiController {
     @ResponseBody
     public UnifyResponse getStatus(@RequestBody UnifyRequest<ReqIdList> request)
     {
+        logger.info("手环设备状态查询....");
         List<String> idlist = JsonMapper.toList(request.getParams().getIdlist().toJSONString(), String.class);
         List<Device> listDevice = deviceService.selectBySnSet(Constants.USERID, idlist.toArray(new String[0]));
         JSONArray ja = new JSONArray();
@@ -154,6 +156,7 @@ public class ApiController {
     @ResponseBody
     public UnifyResponse getHrInfo(@RequestBody UnifyRequest<ReqIdList> request)
     {
+        logger.info("手环位置心率数据根据手环ID实时查询....");
         List<String> idlist = JsonMapper.toList(request.getParams().getIdlist().toJSONString(), String.class);
 
         //获取用户下所有手环信息
@@ -200,6 +203,7 @@ public class ApiController {
     @ResponseBody
     public UnifyResponse getPositionInfo(@RequestBody UnifyRequest<ReqPositionInfo> request)
     {
+        logger.info("手环位置心率数据根据中心点半径实时查询....");
         ReqPositionInfo req = request.getParams();
         Double radio = Double.parseDouble(req.getRadio());
         GlobalCoordinates source = new GlobalCoordinates(Double.parseDouble(req.getLat()), Double.parseDouble(req.getLon()));
@@ -274,6 +278,7 @@ public class ApiController {
     @ResponseBody
     public UnifyResponse getPushInfo(@RequestBody(required = false) UnifyRequest request)
     {
+        logger.info("获取告警记录....");
         //读取上次查询时间，查询从上次查询时间到当前时间的告警记录，然后把当前时间写回文件中。
         String startTime = "2020-01-01 00:00:01";
         String endTime = DateUtil.getPlusTime2(new Date());
@@ -324,6 +329,7 @@ public class ApiController {
                                      @RequestParam("time") String time,
                                      @RequestParam("sing") String sing)
     {
+        logger.info("RFID[{}]收到报警确认消息。", bangId);
         String str = bangId + "_" + time + "_dhcc";
         String sign = DigestUtils.md5DigestAsHex(str.getBytes());
         if (StringUtils.equals(sign, sing)) {
@@ -331,14 +337,15 @@ public class ApiController {
                 Device device = deviceService.getDeviceBySn(bangId);
                 if (device != null) {
                     ObjectNode paras = JsonUtil.convertObject2ObjectNode("{\"length\": 13, \"content\": \"SOS Confirmed\"}");
-                    iotService.deviceCommonds(device.getSn(), Constants.SERVICEID, Constants.METHOD.SEND_NOTICE.name(), paras);
-                    return UnifyResponse.success();
+                    iotService.deviceCommonds(device.getIotDeviceid(), Constants.SERVICEID, Constants.METHOD.SEND_NOTICE.name(), paras);
+                    return UnifyResponse.success("下发消息到IOT平台成功");
                 }
                 return UnifyResponse.success("该设备不存在");
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            return UnifyResponse.success("接收成功，但发送IOT平台异常");
         }
-        return UnifyResponse.failed();
+        return UnifyResponse.failed("签名校验失败！");
     }
 }

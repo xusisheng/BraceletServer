@@ -15,6 +15,8 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -22,6 +24,7 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.util.LinkedList;
@@ -30,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class HttpsUtil {
+	private static final Logger logger = LoggerFactory.getLogger(HttpsUtil.class);
 	public final static String HTTPGET = "GET";
 
 	public final static String HTTPPUT = "PUT";
@@ -55,19 +59,14 @@ public class HttpsUtil {
 	 * */
 	public void initSSLConfigForTwoWay() throws Exception {
 		// 1 Import your own certificate
-		String demo_base_Path = System.getProperty("user.dir");
-		String selfcertpath = demo_base_Path + Constant.SELFCERTPATH;
-		String trustcapath = demo_base_Path + Constant.TRUSTCAPATH;
-
 		KeyStore selfCert = KeyStore.getInstance("pkcs12");
-		selfCert.load(new FileInputStream(selfcertpath),
-				Constant.SELFCERTPWD.toCharArray());
+		selfCert.load(getClass().getClassLoader().getResourceAsStream(Constant.SELFCERTPATH), Constant.SELFCERTPWD.toCharArray());
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance("sunx509");
 		kmf.init(selfCert, Constant.SELFCERTPWD.toCharArray());
 
 		// 2 Import the CA certificate of the server,
 		KeyStore caCert = KeyStore.getInstance("jks");
-		caCert.load(new FileInputStream(trustcapath), Constant.TRUSTCAPWD.toCharArray());
+		caCert.load(getClass().getClassLoader().getResourceAsStream(Constant.TRUSTCAPATH), Constant.TRUSTCAPWD.toCharArray());
 		TrustManagerFactory tmf = TrustManagerFactory.getInstance("sunx509");
 		tmf.init(caCert);
 
@@ -125,7 +124,7 @@ public class HttpsUtil {
 		request.setEntity(new StringEntity(content,
 				ContentType.APPLICATION_JSON));
 
-		System.out.println("doPostJson = " + JsonUtil.jsonObj2Sting(request));
+		logger.debug("doPostJson = " + JsonUtil.jsonObj2Sting(request));
 		return executeHttpRequest(request);
 	}
 	
